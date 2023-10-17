@@ -7,9 +7,10 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <vector>
 #include "Math.h"
+#include <string>
 
 class Game
 {

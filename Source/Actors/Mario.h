@@ -27,6 +27,7 @@ private:
     bool mIsDead;
 
     class RigidBodyComponent* mRigidBodyComponent;
-    class DrawAnimatedComponent* mDrawComponent;
+    //class DrawAnimatedComponent* mDrawComponent;
+    class DrawSpriteComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
 };

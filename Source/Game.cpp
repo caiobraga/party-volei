@@ -27,13 +27,13 @@ const int TILE_SIZE = 32;
 const float SPAWN_DISTANCE = 600.0f;
 
 Game::Game(int windowWidth, int windowHeight)
-        :mWindow(nullptr)
-        ,mRenderer(nullptr)
-        ,mTicksCount(0)
-        ,mIsRunning(true)
-        ,mUpdatingActors(false)
-        ,mWindowWidth(windowWidth)
-        ,mWindowHeight(windowHeight)
+    :mWindow(nullptr)
+    , mRenderer(nullptr)
+    , mTicksCount(0)
+    , mIsRunning(true)
+    , mUpdatingActors(false)
+    , mWindowWidth(windowWidth)
+    , mWindowHeight(windowHeight)
 {
 
 }
@@ -77,9 +77,10 @@ void Game::InitializeActors()
     // --------------
 
     // TODO 2.1 (~1 linha): Crie um objeto do tipo Mario e armazene-o na variável membro mMario.
-
+    mMario = new Mario(this);
     // TODO 2.2 (~1 linha): Utilize a função LoadLevel para carregar o primeiro nível (Level1.txt) do jogo.
     //  Esse arquivo tem 14 linhas e 213 colunas.
+    LoadLevel("../Assets/Levels/Level1.txt", 213, 14);
 }
 
 void Game::LoadLevel(const std::string& levelPath, const int width, const int height)
@@ -93,6 +94,34 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
     //  e altura `height`, onde cada célula tem tamanho 32x32. Para cara caractere entre `A` e `I`, crie um
     //  objeto do tipo `Block` utilizando a textura correspondente. Para cara caractere `Y`, crie um
     //  um objeto do tipo `Spawner` utilizando a distância SPAWN_DISTANCE como parâmetro de criação.
+    std::ifstream file(levelPath);
+
+    if (!file) {
+        std::cerr << "Erro Abrir Arquivo: " << levelPath << std::endl;
+        return;
+    }
+   
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            char c;
+            file >> c;
+
+            if (c >= 'A' && c <= 'I') {
+                std::string path = "D:\\Henrique\\UFV\\Inf 216\\mario\\mario\\Assets\\Sprites\\Blocks\\Block";
+                path+=c;
+                path += ".png";
+                new Block(this, path);
+                int y = mWindowHeight - 14 * 32;
+                mActors.back()->SetPosition(Vector2(32 * i, 32 * j) + Vector2(0,y));
+            }
+
+            if (c == 'Y') {
+                new Spawner(this, SPAWN_DISTANCE);
+            }
+        }
+    }
+
 }
 
 void Game::RunLoop()
@@ -274,12 +303,23 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath) {
     // TODO 1.1 (~4 linhas): Utilize a função `IMG_Load` para carregar a imagem passada como parâmetro
     //  `texturePath`. Esse função retorna um ponteiro para `SDL_Surface*`. Retorne `nullptr` se a
     //  imagem não foi carregada com sucesso.
+    SDL_Surface* surface = IMG_Load(texturePath.c_str());
+    if (surface == nullptr) {
+        return nullptr;
+    }
 
 
     // TODO 1.2 (~4 linhas): Utilize a função `SDL_CreateTextureFromSurface` para criar uma textura a partir
     //  da imagem carregada anteriormente. Essa função retorna um ponteiro para `SDL_Texture*`. Logo após criar
     //  a textura, utilize a função `SDL_FreeSurface` para liberar a imagem carregada. Se a textura foi carregada
     //  com sucesso, retorne o ponteiro para a textura. Caso contrário, retorne `nullptr`.
+    
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+    SDL_FreeSurface(surface);
+    if (texture == nullptr) {
+        return nullptr;
+    }
+    return texture;
 }
 
 void Game::Shutdown()

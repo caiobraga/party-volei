@@ -5,6 +5,7 @@
 #pragma once
 
 #include "DrawSpriteComponent.h"
+#include <unordered_map>            
 
 class DrawAnimatedComponent : public DrawSpriteComponent {
 public:

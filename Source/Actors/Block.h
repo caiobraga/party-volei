@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Actor.h"
+#include <string>
 
 class Block : public Actor
 {

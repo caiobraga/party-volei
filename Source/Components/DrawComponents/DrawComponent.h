@@ -6,6 +6,7 @@
 #include "../Component.h"
 #include "../../Math.h"
 #include <vector>
+#include <unordered_set>
 #include <SDL.h>
 
 class DrawComponent : public Component

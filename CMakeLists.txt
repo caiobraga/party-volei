@@ -46,7 +46,7 @@ add_executable(${PROJECT_NAME}
 )
 
 ####### DO NOT EDIT BELLOW
-find_package(SDL2 2.28.2 EXACT REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})

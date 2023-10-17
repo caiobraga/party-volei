@@ -30,6 +30,11 @@ Vector2 AABBColliderComponent::GetMin() const
     // TODO 1.1 (1 linha): Calcule (e retorne) o ponto mínimo dessa AABB. A variável `mOffset`
     //  define a posição da AABB com relação a posição do objeto dono do componente. Portanto,
     //  basta somar a posição do objeto dono do componente a esse deslocamento.
+
+
+
+    
+    return {};
 }
 
 Vector2 AABBColliderComponent::GetMax() const
@@ -42,6 +47,11 @@ Vector2 AABBColliderComponent::GetMax() const
     //  `mWidth` e `mHeight` definem a altura e a largura da AABB, respectivamente. Portanto,
     //  basta somar a largura à coordenada x e a altura à coordenada y do ponto mínimo da AABB
     //  (utilize o método `GetMin` implementado na etapa anterior).
+
+
+
+    
+    return {};
 }
 
 Vector2 AABBColliderComponent::GetCenter() const
@@ -53,6 +63,10 @@ Vector2 AABBColliderComponent::GetCenter() const
     // TODO 1.3 (1 linha): Calcule (e retorne) o centro dessa AABB. Esse ponto pode ser calculado
     //  de forma similar ao ponto máximo, basta somar a metade da largura à coordenada x e a metade da altura
     //  à coordenada y do ponto mínimo da AABB (utilize o método `GetMin` implementado anteriormente).
+
+
+    Vector2 teste(0, 0);
+    return teste;
 }
 
 bool AABBColliderComponent::Intersect(const AABBColliderComponent& b) const
@@ -64,6 +78,7 @@ bool AABBColliderComponent::Intersect(const AABBColliderComponent& b) const
     // TODO 2.1 (~5 linhas): Verifique se esta AABB está colidindo com a AABB b passada como parâmetro.
     //  Retorne verdadeiro se estiver e falso caso contrário. Utilize os métodos `GetMin` e `GetMax`
     //  para acessar os pontos de mínimo e máximo das duas AABBs.
+    return false;
 }
 
 AABBColliderComponent::Overlap AABBColliderComponent::GetMinOverlap(AABBColliderComponent* b) const
@@ -79,6 +94,9 @@ AABBColliderComponent::Overlap AABBColliderComponent::GetMinOverlap(AABBCollider
 
     // TODO 3.2 (~4 linhas): Encontre e retorne a sobreposição mínima. Para isso, utilize
     //  os valores absolutos das sobreposições calculadas na etapa anterior.
+    
+    
+    return {};
 }
 
 void AABBColliderComponent::ResolveCollisions(RigidBodyComponent *rigidBody, const Overlap& minOverlap)
@@ -100,6 +118,7 @@ void AABBColliderComponent::ResolveCollisions(RigidBodyComponent *rigidBody, con
     //  `CollisionSide::Right` com velocidade horizontal positiva. Se um desses dois casos for verdadeiro, some a quantidade
     //  de sobreposição `minOverlap.amount` à posição horizontal do dono dessa AABB e reinicialize sua velocidade horizontal
     //  para zero.
+    return;
 }
 
 void AABBColliderComponent::DetectCollision(RigidBodyComponent *rigidBody)

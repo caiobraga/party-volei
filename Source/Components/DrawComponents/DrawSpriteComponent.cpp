@@ -18,6 +18,7 @@ DrawSpriteComponent::DrawSpriteComponent(class Actor* owner, const std::string &
     // TODO 1.1 (1 linhas): Utilize a função LoadTexture da classe Game para criar uma textura a partir da
     //  imagem `texturePath` passada como parâmetro no construtor. Armazene o ponteiro retornada (SDLTexture*)
     //  na variável membro 'mSpriteSheetSurface'.
+    mSpriteSheetSurface = GetGame()->LoadTexture(texturePath);
 }
 
 void DrawSpriteComponent::Draw(SDL_Renderer *renderer)
@@ -33,6 +34,24 @@ void DrawSpriteComponent::Draw(SDL_Renderer *renderer)
     //  esquerda. A orientação do sprite (esquerda ou direita) depende da rotação do objeto dono do sprite.
     //  Se a rotação for zero, o sprite deve ser desenhado virado à direita. Se for igual a Pi, deve
     //  ser desenhado à esquerda.
+
+
+    Vector2 objectPosition = GetOwner()->GetPosition();
+    //Vector2 cameraPosition = GetOwner()->GetGame()->GetCameraPos();
+    //objectPosition -= cameraPosition;
+
+    SDL_Rect srcRect = { 0,0,mWidth, mHeight };
+    SDL_Rect destRect = { objectPosition.x, objectPosition.y, mWidth, mHeight };
+    SDL_Point point = { objectPosition.x, objectPosition.y };
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    if (GetOwner()->GetRotation() == 0) {
+        flip = SDL_FLIP_NONE;
+    }
+    else {
+        flip = SDL_FLIP_HORIZONTAL;
+    }
+
+    SDL_RenderCopyEx(renderer, mSpriteSheetSurface, &srcRect, &destRect, 0.0, &point, flip);
 
     // --------------
     // TODO - PARTE 3
