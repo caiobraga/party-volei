@@ -37,12 +37,12 @@ void DrawSpriteComponent::Draw(SDL_Renderer *renderer)
 
 
     Vector2 objectPosition = GetOwner()->GetPosition();
-    //Vector2 cameraPosition = GetOwner()->GetGame()->GetCameraPos();
-    //objectPosition -= cameraPosition;
+    Vector2 cameraPosition = GetOwner()->GetGame()->GetCameraPos();
+    objectPosition -= cameraPosition;
 
     SDL_Rect srcRect = { 0,0,mWidth, mHeight };
-    SDL_Rect destRect = { objectPosition.x, objectPosition.y, mWidth, mHeight };
-    SDL_Point point = { objectPosition.x, objectPosition.y };
+    SDL_Rect destRect = { static_cast<int>(objectPosition.x), static_cast<int>(objectPosition.y), mWidth, mHeight };
+    SDL_Point point = { static_cast<int>(objectPosition.x), static_cast<int>(objectPosition.y) };
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     if (GetOwner()->GetRotation() == 0) {
         flip = SDL_FLIP_NONE;

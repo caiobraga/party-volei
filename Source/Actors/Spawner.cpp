@@ -27,4 +27,13 @@ void Spawner::OnUpdate(float deltaTime)
     //  `GOOMBA_FORWARD_SPEED`. Altere a posição do goomba para ser igual a posição desse spawner.
     //  Em seguida, altere a velocidade do goomba para que ele se mova para a esquerda com velocidade
     //  `GOOMBA_FORWARD_SPEED`. Por fim, destrua esse objeto spawner.
+    int dist = std::abs(GetGame()->GetMario()->GetPosition().x - this->GetPosition().x);
+    if (dist < mSpawnDistance) {
+       Goomba *aux = new Goomba(this->GetGame(), GOOMBA_FORWARD_SPEED);
+       aux->SetPosition(this->GetPosition());
+       aux->GetComponent<RigidBodyComponent>()->SetVelocity(Vector2(-GOOMBA_FORWARD_SPEED, 0));
+       this->SetState(ActorState::Destroy);
+       //delete this;
+
+    }
 }

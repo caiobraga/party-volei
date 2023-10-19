@@ -80,7 +80,8 @@ void Game::InitializeActors()
     mMario = new Mario(this);
     // TODO 2.2 (~1 linha): Utilize a função LoadLevel para carregar o primeiro nível (Level1.txt) do jogo.
     //  Esse arquivo tem 14 linhas e 213 colunas.
-    LoadLevel("../Assets/Levels/Level1.txt", 213, 14);
+    LoadLevel("../Assets/Levels/Level1.txt", 212, 14);
+    //LoadLevel("..\\Assets\\Levels\\Level1.txt", 14, 213);
 }
 
 void Game::LoadLevel(const std::string& levelPath, const int width, const int height)
@@ -108,16 +109,21 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
             file >> c;
 
             if (c >= 'A' && c <= 'I') {
-                std::string path = "D:\\Henrique\\UFV\\Inf 216\\mario\\mario\\Assets\\Sprites\\Blocks\\Block";
+                std::string path = "../Assets/Sprites/Blocks/Block";
                 path+=c;
                 path += ".png";
                 new Block(this, path);
                 int y = mWindowHeight - 14 * 32;
-                mActors.back()->SetPosition(Vector2(32 * i, 32 * j) + Vector2(0,y));
+            
+
+                mActors.back()->SetPosition(Vector2(32 * (j), 32 * i) + Vector2(0, y));
             }
 
             if (c == 'Y') {
+                int y = mWindowHeight - 14 * 32;
                 new Spawner(this, SPAWN_DISTANCE);
+                mActors.back()->SetPosition(Vector2(32 * (j), 32 * i) + Vector2(0, y));
+
             }
         }
     }
@@ -176,17 +182,30 @@ void Game::UpdateGame()
 
 void Game::UpdateCamera()
 {
-    // --------------
-    // TODO - PARTE 3
-    // --------------
 
-    // TODO 1.1 (~4 linhas): Calcule a posição horizontal da câmera subtraindo a posição horizontal do
-    //  jogador (i.e., do Mário) da metade da largura da janela. Isso fará com que a câmera fique sempre
-    //  centralizada no jogador. No SMB, o jogador não pode voltar no nível, portanto, antes de atualizar
-    //  a posição da câmera, verifique se a posição calculada é maior do que a posição anterior. Além disso,
-    //  limite a posição para que a câmera fique entre 0 e o limite superior do nível. Para calcular o
-    //  limite superior do nível, utilize as constantes `LEVEL_WIDTH` e `TILE_SIZE`.
+  // --------------
+  // TODO - PARTE 3
+  // --------------
+
+  // TODO 1.1 (~4 linhas): Calcule a posição horizontal da câmera subtraindo a posição horizontal do
+  //  jogador (i.e., do Mário) da metade da largura da janela. Isso fará com que a câmera fique sempre
+  //  centralizada no jogador. No SMB, o jogador não pode voltar no nível, portanto, antes de atualizar
+  //  a posição da câmera, verifique se a posição calculada é maior do que a posição anterior. Além disso,
+  //  limite a posição para que a câmera fique entre 0 e o limite superior do nível. Para calcular o
+  //  limite superior do nível, utilize as constantes `LEVEL_WIDTH` e `TILE_SIZE`.
+    float posX = this->GetMario()->GetPosition().x - mWindowWidth / 2.0;
+
+    
+    if (posX > (LEVEL_WIDTH * TILE_SIZE - mWindowWidth - 32))
+        posX = LEVEL_WIDTH * TILE_SIZE - mWindowWidth - 32;
+    else if (posX < GetCameraPos().x)
+        posX = GetCameraPos().x;
+    else if (posX < 0)
+        posX = 0;
+
+    this->SetCameraPos(Vector2(posX, this->GetCameraPos().y));
 }
+
 
 void Game::UpdateActors(float deltaTime)
 {

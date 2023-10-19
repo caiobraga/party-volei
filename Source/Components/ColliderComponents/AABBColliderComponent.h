@@ -8,6 +8,7 @@
 #include "../RigidBodyComponent.h"
 #include <vector>
 #include <set>
+#include <algorithm>
 
 enum class ColliderLayer
 {
