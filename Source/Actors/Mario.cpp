@@ -25,7 +25,7 @@ Mario::Mario(Game* game,
     // TODO 1.1 (~1 linha): Até que você termine a implementação do componente de animação `DrawAnimatedComponent`, utilize o componente
     //  para desenho de sprites estáticos `DrawSpriteComponent`. Crie um desses
     //  componentes com a textura `Assets/Sprites/Mario/Idle.png` e dimensões (32,32).
-    mDrawComponent = new DrawSpriteComponent(this, "D:\\Henrique\\UFV\\Inf 216\\mario\\mario\\Assets\\Sprites\\Mario\\Idle.png", 32, 32);
+    mDrawComponent = new DrawSpriteComponent(this, "../Assets/Sprites/Mario/Idle.png", 32, 32);
     // TODO 1.2 (~1 linha): Para que o jogador possa se mover, crie também um componente `RigidBodyComponent` com massa `1.0` e coeficiente de atrito `5.0`. Note que a
     //  classe `Mario` já tem atributos para armazenar esses componentes.
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 5.0f);

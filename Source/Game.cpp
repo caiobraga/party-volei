@@ -70,8 +70,7 @@ bool Game::Initialize()
     return true;
 }
 
-void Game::InitializeActors()
-{
+void Game::InitializeActors() {
     // --------------
     // TODO - PARTE 1
     // --------------
@@ -80,7 +79,7 @@ void Game::InitializeActors()
     mMario = new Mario(this);
     // TODO 2.2 (~1 linha): Utilize a função LoadLevel para carregar o primeiro nível (Level1.txt) do jogo.
     //  Esse arquivo tem 14 linhas e 213 colunas.
-    LoadLevel("../Assets/Levels/Level1.txt", 213, 14);
+    LoadLevel("../Assets/Levels/Level1.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
 }
 
 void Game::LoadLevel(const std::string& levelPath, const int width, const int height)
@@ -113,7 +112,7 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
                 path += ".png";
                 new Block(this, path);
                 int y = mWindowHeight - 14 * 32;
-                mActors.back()->SetPosition(Vector2(32 * i, 32 * j) + Vector2(0,y));
+                mActors.back()->SetPosition(Vector2(32 * j, 32 * i) + Vector2(0,y));
             }
 
             if (c == 'Y') {
@@ -186,6 +185,7 @@ void Game::UpdateCamera()
     //  a posição da câmera, verifique se a posição calculada é maior do que a posição anterior. Além disso,
     //  limite a posição para que a câmera fique entre 0 e o limite superior do nível. Para calcular o
     //  limite superior do nível, utilize as constantes `LEVEL_WIDTH` e `TILE_SIZE`.
+
 }
 
 void Game::UpdateActors(float deltaTime)

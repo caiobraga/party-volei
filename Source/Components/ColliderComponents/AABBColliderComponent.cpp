@@ -5,6 +5,7 @@
 #include "AABBColliderComponent.h"
 #include "../../Actors/Actor.h"
 #include "../../Game.h"
+#include <algorithm>
 
 AABBColliderComponent::AABBColliderComponent(class Actor* owner, int dx, int dy, int w, int h, ColliderLayer layer, int updateOrder)
         :Component(owner, updateOrder)
@@ -30,7 +31,7 @@ Vector2 AABBColliderComponent::GetMin() const
     // TODO 1.1 (1 linha): Calcule (e retorne) o ponto mínimo dessa AABB. A variável `mOffset`
     //  define a posição da AABB com relação a posição do objeto dono do componente. Portanto,
     //  basta somar a posição do objeto dono do componente a esse deslocamento.
-
+    return this->mOffset + this->mOwner->GetPosition();
 
 
     
@@ -47,7 +48,7 @@ Vector2 AABBColliderComponent::GetMax() const
     //  `mWidth` e `mHeight` definem a altura e a largura da AABB, respectivamente. Portanto,
     //  basta somar a largura à coordenada x e a altura à coordenada y do ponto mínimo da AABB
     //  (utilize o método `GetMin` implementado na etapa anterior).
-
+    return Vector2(this->mWidth + this->GetMin().x, this->mHeight + this->GetMin().y);
 
 
     
@@ -65,7 +66,7 @@ Vector2 AABBColliderComponent::GetCenter() const
     //  à coordenada y do ponto mínimo da AABB (utilize o método `GetMin` implementado anteriormente).
 
 
-    Vector2 teste(0, 0);
+    Vector2 teste(this->GetMin().x +  this->mWidth / 2, this->GetMin().y +  this->mHeight / 2);
     return teste;
 }
 
@@ -78,6 +79,20 @@ bool AABBColliderComponent::Intersect(const AABBColliderComponent& b) const
     // TODO 2.1 (~5 linhas): Verifique se esta AABB está colidindo com a AABB b passada como parâmetro.
     //  Retorne verdadeiro se estiver e falso caso contrário. Utilize os métodos `GetMin` e `GetMax`
     //  para acessar os pontos de mínimo e máximo das duas AABBs.
+    // Calculate the min and max values for this AABB
+    Vector2 thisMin = GetMin();
+    Vector2 thisMax = GetMax();
+
+    // Calculate the min and max values for the AABB b
+    Vector2 bMin = b.GetMin();
+    Vector2 bMax = b.GetMax();
+
+    // Check for intersection
+    if (thisMin.x <= bMax.x && thisMax.x >= bMin.x &&
+        thisMin.y <= bMax.y && thisMax.y >= bMin.y) {
+        return true; // AABBs are intersecting
+    }
+
     return false;
 }
 
@@ -91,10 +106,47 @@ AABBColliderComponent::Overlap AABBColliderComponent::GetMinOverlap(AABBCollider
     // TODO 3.1 (~4 linhas): Armazene no mapa `overlaps` as sobreposições (com sinal -/+) dos quatro lados da
     //  colisão: esquerda, direita, cima e baixo. Utilize os métodos `GetMin` e `GetMax` para acessar os
     //  pontos de mínimo e máximo das duas AABBs.
+    Vector2 thisMin = GetMin();
+    Vector2 thisMax = GetMax();
+    Vector2 bMin = b->GetMin();
+    Vector2 bMax = b->GetMax();
+    Overlap left;
+    Overlap rigth;
+    Overlap top;
+    Overlap down;
+
+    left.amount = thisMin.x - bMax.x;
+    left.side = CollisionSide::Left;
+    left.target = const_cast<AABBColliderComponent*>(this);
+
+    rigth.amount = bMin.x - thisMax.x;
+    rigth.side = CollisionSide::Right;
+    rigth.target = const_cast<AABBColliderComponent*>(this);
+
+    top.amount = thisMin.y - bMax.y;
+    top.side = CollisionSide::Top;
+    top.target = const_cast<AABBColliderComponent*>(this);
+
+    down.amount =  bMin.y - thisMax.y;
+    down.side = CollisionSide::Down;
+    down.target = const_cast<AABBColliderComponent*>(this);
+
+    overlaps[0] = left;
+    overlaps[1] = rigth;
+    overlaps[2] = top;
+    overlaps[3] = down;
 
     // TODO 3.2 (~4 linhas): Encontre e retorne a sobreposição mínima. Para isso, utilize
     //  os valores absolutos das sobreposições calculadas na etapa anterior.
-    
+    Overlap minOverlap = overlaps.begin()->second;
+    for (const auto& overlap : overlaps) {
+        if (std::abs(overlap.second.amount) < std::abs(minOverlap.amount)) {
+            minOverlap = overlap.second;
+        }
+    }
+
+    return minOverlap;
+
     
     return {};
 }
@@ -112,6 +164,19 @@ void AABBColliderComponent::ResolveCollisions(RigidBodyComponent *rigidBody, con
     //  à posição vertical do dono dessa AABB e reinicialize sua velocidade vertical para zero .
     //  Dica: para verificar, por exemplo, se a colisão foi por cima, basta comparar se minOverlap.side
     //  é igual a CollisionSide::Top.
+    if (minOverlap.side == CollisionSide::Top && rigidBody->GetVelocity().y < 0) {
+        mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y + minOverlap.amount));
+        rigidBody->SetVelocity(Vector2(rigidBody->GetVelocity().x, 0));
+    } else if (minOverlap.side == CollisionSide::Down && rigidBody->GetVelocity().y > 0) {
+        mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y - minOverlap.amount));
+        rigidBody->SetVelocity(Vector2(rigidBody->GetVelocity().x, 0));
+    } else if (minOverlap.side == CollisionSide::Left && rigidBody->GetVelocity().x < 0) {
+        mOwner->SetPosition(Vector2(mOwner->GetPosition().x + minOverlap.amount, mOwner->GetPosition().y));
+        rigidBody->SetVelocity(Vector2(0, rigidBody->GetVelocity().y));
+    } else if (minOverlap.side == CollisionSide::Right && rigidBody->GetVelocity().x > 0) {
+        mOwner->SetPosition(Vector2(mOwner->GetPosition().x - minOverlap.amount, mOwner->GetPosition().y));
+        rigidBody->SetVelocity(Vector2(0, rigidBody->GetVelocity().y));
+    }
 
     // TODO 4.2 (~4 linhas): Caso nenhum dos dois casos anteriores sejam verdadeiros, verifique se a sobreposição
     //  `minOverlap` ocorreu no lado esquerdo `CollisionSide::Left` com velocidade horizontal negativa ou no lado direito
@@ -134,8 +199,14 @@ void AABBColliderComponent::DetectCollision(RigidBodyComponent *rigidBody)
     //  as AABBs de todos os atores do jogo (mario, goombas e blocos). Ordenar esse vetor dessa forma fará
     //  com que as colisões mais próximas sejam resolvidas primeiro, zerando as velocidades dos objetos na
     //  ordem esperada.
-
+    std::sort(colliders.begin(), colliders.end(), [this](const AABBColliderComponent* a, const AABBColliderComponent* b) {
+        float distanceA = (a->GetCenter() - this->GetCenter()).LengthSq();
+        float distanceB = (b->GetCenter() - this->GetCenter()).LengthSq();
+        return distanceA < distanceB;
+    });
     std::unordered_map<CollisionSide, Overlap> responses;
+    bool verticalCollision = false;
+    bool horizontalCollision = false;
 
     // TODO 5.2: Utilize um laço para percorra o vetor `colliders` ordenado,
     //  verificando colisões com cada AABB alvo. Em cada iteração do laço, execute as seguintes operações.
@@ -149,6 +220,35 @@ void AABBColliderComponent::DetectCollision(RigidBodyComponent *rigidBody)
     //    de callback `OnCollision` para o objeto dono dessa AABB.
     //  - 5.2.4 (~3 linhas): Verifique se já houve uma colisão vertical e uma horizontal durante o laço.
     //    Se sim, interrompa o laço (break), pois não precisamos verificar mais colisões.
+
+    for (const auto& collider : colliders) {
+        // 5.2.1
+        if (collider == this) {
+            continue;
+        }
+
+        // 5.2.2
+        if (!collider->IsEnabled()) {
+            continue;
+        }
+
+        // 5.2.3
+        auto minOverlap = GetMinOverlap(collider);
+        ResolveCollisions(rigidBody, minOverlap);
+        responses[minOverlap.side] = minOverlap;
+
+        // 5.2.4
+        if (minOverlap.side == CollisionSide::Top || minOverlap.side == CollisionSide::Down) {
+            verticalCollision = true;
+        } else if (minOverlap.side == CollisionSide::Left || minOverlap.side == CollisionSide::Right) {
+            horizontalCollision = true;
+        }
+
+        // Check if both vertical and horizontal collisions occurred
+        if (verticalCollision && horizontalCollision) {
+            break;
+        }
+    }
 
     // Callback only for closest (first) collision
     mOwner->OnCollision(responses);
