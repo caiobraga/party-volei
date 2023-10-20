@@ -66,8 +66,8 @@ Vector2 AABBColliderComponent::GetCenter() const
     //  à coordenada y do ponto mínimo da AABB (utilize o método `GetMin` implementado anteriormente).
 
 
-    Vector2 teste(this->GetMin().x +  this->mWidth / 2, this->GetMin().y +  this->mHeight / 2);
-    return teste;
+    /*Vector2 teste(this->GetMin().x +  this->mWidth / 2, this->GetMin().y +  this->mHeight / 2);
+    return teste;*/
 }
 
 bool AABBColliderComponent::Intersect(const AABBColliderComponent& b) const

@@ -37,7 +37,8 @@ Mario::Mario(Game* game,
     // TODO 1.1 (~1 linhas): Crie um componente AABBColliderComponent passando
     //  as dimensões (0,0,32,32) e o tipo ColliderLayer::Player da AABB. Se quiser desenhar a AABB do Mário
     //  para testar as colisões, crie um componente `DrawPolygonComponent` com os vértices da AABB.
-
+    this->mColliderComponent = new AABBColliderComponent(this, 0,0,32,32, ColliderLayer::Player);
+    //DrawPolygonComponent(this, colioder.GetCenter() );
     // --------------
     // TODO - PARTE 4
     // --------------
@@ -87,6 +88,14 @@ void Mario::OnProcessInput(const uint8_t* state)
     // TODO 2.1 (~3 linhas): Verifique se o jogador está no chão (`mIsOnGround`) e se ele pressionou a
     //  tecla `A`. Se sim, altere a velocidade vertical para `mJumpSpeed` e a variável `mIsOnGround`
     //  para falso. Utilize `SetVelocity` ao invés de `ApplyForce` para que o pulo seja mais rápido e preciso.
+
+    if(mIsOnGround){
+        if(state[SDL_KEYUP] ){
+            mRigidBodyComponent->SetVelocity(Vector2(mJumpSpeed, 0));
+            mIsOnGround = false;
+
+        }
+    }
 }
 
 void Mario::OnUpdate(float deltaTime)
