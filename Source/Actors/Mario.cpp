@@ -63,17 +63,17 @@ void Mario::OnProcessInput(const uint8_t* state)
     //  a direita com magnitude `mForwardSpeed` e altere a rotação `mRotation` para `0`. Além disso, altere
     //  a variável `mIsRunning` para verdadeiro. Isso será importante para controlar as animações na Parte 4.
 
-    if (state[SDL_SCANCODE_D]) {
-        mRotation = 0;
+    if (state[SDL_SCANCODE_A]) {
+        mRotation = Math::Pi;
         mIsRunning = true;
-        mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed, 0));
+        mRigidBodyComponent->ApplyForce(Vector2(-mForwardSpeed, 0));
     }
     // TODO 1.2 (~2 linhas): Verifique se o jogador pressionou a tecla `A`. Se sim, aplique uma força para a
     //  esquerda com magnitude `mForwardSpeed` e altere a rotação `mRotation` para `Math::Pi`. Além disso,
     //  altere a variável `mIsRunning` para verdadeiro. Caso o jogador não estiver pressionando nem `D`, nem `A`,
     //  altere essa variável para falso. Isso será importante para controlar as animações na Parte 4.
-    else if (state[SDL_SCANCODE_A]) {
-        mRotation = Math::Pi;
+    else if (state[SDL_SCANCODE_D]) {
+        mRotation = 0;
         mIsRunning = true;
         mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed, 0));
     }
@@ -90,8 +90,8 @@ void Mario::OnProcessInput(const uint8_t* state)
     //  para falso. Utilize `SetVelocity` ao invés de `ApplyForce` para que o pulo seja mais rápido e preciso.
 
     if(mIsOnGround){
-        if(state[SDL_KEYUP] ){
-            mRigidBodyComponent->SetVelocity(Vector2(mJumpSpeed, 0));
+        if(state[SDL_SCANCODE_W] ){
+            mRigidBodyComponent->SetVelocity(Vector2(0, mJumpSpeed));
             mIsOnGround = false;
 
         }

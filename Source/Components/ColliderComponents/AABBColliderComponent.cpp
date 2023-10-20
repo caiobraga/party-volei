@@ -168,13 +168,13 @@ void AABBColliderComponent::ResolveCollisions(RigidBodyComponent *rigidBody, con
         mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y + minOverlap.amount));
         rigidBody->SetVelocity(Vector2(rigidBody->GetVelocity().x, 0));
     } else if (minOverlap.side == CollisionSide::Down && rigidBody->GetVelocity().y > 0) {
-        mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y - minOverlap.amount));
+        mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y + minOverlap.amount));
         rigidBody->SetVelocity(Vector2(rigidBody->GetVelocity().x, 0));
     } else if (minOverlap.side == CollisionSide::Left && rigidBody->GetVelocity().x < 0) {
         mOwner->SetPosition(Vector2(mOwner->GetPosition().x + minOverlap.amount, mOwner->GetPosition().y));
         rigidBody->SetVelocity(Vector2(0, rigidBody->GetVelocity().y));
     } else if (minOverlap.side == CollisionSide::Right && rigidBody->GetVelocity().x > 0) {
-        mOwner->SetPosition(Vector2(mOwner->GetPosition().x - minOverlap.amount, mOwner->GetPosition().y));
+        mOwner->SetPosition(Vector2(mOwner->GetPosition().x + minOverlap.amount, mOwner->GetPosition().y));
         rigidBody->SetVelocity(Vector2(0, rigidBody->GetVelocity().y));
     }
 
