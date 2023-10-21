@@ -58,12 +58,10 @@ void DrawAnimatedComponent::Draw(SDL_Renderer *renderer)
 
     int id_frame = currentAnimation[id_sprite];
 
-    Vector2 objectpos = GetOwner()->GetPosition();
-    Vector2 camerapos = GetOwner()->GetGame()->GetCameraPos();
-    objectpos -= camerapos;
 
-    int x = GetOwner()->GetPosition().x;
-    int y = GetOwner()->GetPosition().y;
+
+    int x = GetOwner()->GetPosition().x - GetOwner()->GetGame()->GetCameraPos().x;
+    int y = GetOwner()->GetPosition().y - GetOwner()->GetGame()->GetCameraPos().y;
 
     SDL_Rect srcRect = *(mSpriteSheetData[id_frame]);
     SDL_Rect destRect = {x, y,  srcRect.w, srcRect.h };

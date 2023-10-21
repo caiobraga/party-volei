@@ -313,8 +313,8 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath) {
     // TODO 1.1 (~4 linhas): Utilize a função `IMG_Load` para carregar a imagem passada como parâmetro
     //  `texturePath`. Esse função retorna um ponteiro para `SDL_Surface*`. Retorne `nullptr` se a
     //  imagem não foi carregada com sucesso.
-    SDL_Surface* surface = IMG_Load(texturePath.c_str());
-    if (surface == nullptr) {
+    SDL_Surface* img = IMG_Load(texturePath.c_str());
+    if (!img) {
         return nullptr;
     }
 
@@ -324,10 +324,7 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath) {
     //  a textura, utilize a função `SDL_FreeSurface` para liberar a imagem carregada. Se a textura foi carregada
     //  com sucesso, retorne o ponteiro para a textura. Caso contrário, retorne `nullptr`.
 
-    SDL_Surface* img = IMG_Load(texturePath.c_str());
-    if (!img) {
-        return nullptr;
-    }
+
     auto tx = SDL_CreateTextureFromSurface(mRenderer, img);
     SDL_FreeSurface(img);
     if (tx)
