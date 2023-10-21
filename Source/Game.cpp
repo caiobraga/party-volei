@@ -99,7 +99,7 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
         std::cerr << "Erro Abrir Arquivo: " << levelPath << std::endl;
         return;
     }
-   
+
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -113,10 +113,11 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
                 new Block(this, path);
                 int y = mWindowHeight - 14 * 32;
                 mActors.back()->SetPosition(Vector2(32 * j, 32 * i) + Vector2(0,y));
-            }
-
-            if (c == 'Y') {
+            }else if (c == 'Y')
+            {
+                int y = mWindowHeight - 14 * 32;
                 new Spawner(this, SPAWN_DISTANCE);
+                mActors.back()->SetPosition(Vector2(32 * (j), 32 * i) + Vector2(0, y));
             }
         }
     }
@@ -185,6 +186,15 @@ void Game::UpdateCamera()
     //  a posição da câmera, verifique se a posição calculada é maior do que a posição anterior. Além disso,
     //  limite a posição para que a câmera fique entre 0 e o limite superior do nível. Para calcular o
     //  limite superior do nível, utilize as constantes `LEVEL_WIDTH` e `TILE_SIZE`.
+    float camerapos =  mMario->GetPosition().x - mWindowWidth / 2.0;
+    if (camerapos > (LEVEL_WIDTH * TILE_SIZE - mWindowWidth - 32))
+        camerapos = LEVEL_WIDTH * TILE_SIZE - mWindowWidth - 32;
+    else if (camerapos < GetCameraPos().x)
+        camerapos = GetCameraPos().x;
+    else if (camerapos < 0)
+        camerapos = 0;
+
+    SetCameraPos(Vector2(camerapos,GetCameraPos().y));
 
 }
 
@@ -313,13 +323,22 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath) {
     //  da imagem carregada anteriormente. Essa função retorna um ponteiro para `SDL_Texture*`. Logo após criar
     //  a textura, utilize a função `SDL_FreeSurface` para liberar a imagem carregada. Se a textura foi carregada
     //  com sucesso, retorne o ponteiro para a textura. Caso contrário, retorne `nullptr`.
-    
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
-    SDL_FreeSurface(surface);
-    if (texture == nullptr) {
+
+    SDL_Surface* img = IMG_Load(texturePath.c_str());
+    if (!img) {
         return nullptr;
     }
-    return texture;
+    auto tx = SDL_CreateTextureFromSurface(mRenderer, img);
+    SDL_FreeSurface(img);
+    if (tx)
+    {
+        return tx;
+    }
+    else
+    {
+        std::cout << "nao foi possivel criar a textura" << std::endl;
+        return nullptr;
+    }
 }
 
 void Game::Shutdown()

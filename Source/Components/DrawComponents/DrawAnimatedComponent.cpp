@@ -47,57 +47,57 @@ void DrawAnimatedComponent::LoadSpriteSheet(const std::string& texturePath, cons
 
 void DrawAnimatedComponent::Draw(SDL_Renderer *renderer)
 {
-    // --------------
-    // TODO - PARTE 4
-    // --------------
 
-    // TODO 2.1 (1 linha): Todos os quadros desse objeto estão armazenados no vetor
-    //  `mSpriteSheetData`. Cada posição desse vetor é um ponteiro para um SDL_Rect*, representando as coordenadas
-    //  de um sprite no sprite sheet. Além disso, todas as animações estão armazenadas no mapa `mAnimations`.
-    //  Uma animação é identificada por um nome (string) e definida por um vetor de índices de quadros
-    //  (armazenados em mSpriteSheetData). A animação corrente é armazenada na variável membro `mAnimName`.
-    //  Sempre que um objeto com o componente DrawAnimatedComponent é desenhado na tela,
-    //  precisamos obter o índice do quadro corrente a partir do timer da animação. Para isso,
-    //  basta converter o timer da animação (`mAnimTimer`) para inteiro. Obtenha o índice do quadro corrente
-    //  indexando o mapa ` mAnimations` com o timer da animação (`mAnimTimer`) convertido para inteiro.
-    //  Note que `mAnimations[mAnimName]` armazena os índices dos quadros da animação atual. Armazene
-    //  o resultado em uma variável `spriteIdx`.
+    int id_sprite = int(mAnimTimer);
+    auto currentAnimation = mAnimations[mAnimName];
+
+    if (id_sprite >= currentAnimation.size()) {
+        id_sprite = currentAnimation.size() - 1;
+    }
 
 
-    // TODO 2.2 (~8 linhas): Utilize a função SDL_RenderCopyEx para desenhar o sprite
-    //  com índice `spriteIdx`. O SDLRect que define a região do sprite no sprite sheet está armazenado
-    //  em `mSpriteSheetData[spriteIdx]`. Além disso, você terá que criar um SDL_Rect para definir a região
-    //  da tela onde será desenhado o sprite, assim como no `DrawSpriteComponent`. Você também terá que
-    //  criar uma flag do tipo SDL_RendererFlip assim como no DrawSpriteComponent.
+    int id_frame = currentAnimation[id_sprite];
+
+    Vector2 objectpos = GetOwner()->GetPosition();
+    Vector2 camerapos = GetOwner()->GetGame()->GetCameraPos();
+    objectpos -= camerapos;
+
+    int x = GetOwner()->GetPosition().x;
+    int y = GetOwner()->GetPosition().y;
+
+    SDL_Rect srcRect = *(mSpriteSheetData[id_frame]);
+    SDL_Rect destRect = {x, y,  srcRect.w, srcRect.h };
+    SDL_Point point = { x,y};
+
+
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    if (GetOwner()->GetRotation() == 0) {
+        flip = SDL_FLIP_NONE;
+    }
+    else {
+        flip = SDL_FLIP_HORIZONTAL;
+    }
+
+    SDL_RenderCopyEx(renderer, mSpriteSheetSurface, &srcRect, &destRect, 0.0, &point, flip);
+
 }
 
 void DrawAnimatedComponent::Update(float deltaTime)
 {
-    // --------------
-    // TODO - PARTE 4
-    // --------------
+    if (mIsPaused) return;
 
-    // TODO 1.1 (~2 linhas): Verifique se animação está pausada (`mIsPaused`). Se estiver, saia da função (return).
+    mAnimTimer += deltaTime * mAnimFPS;
+    int tamAnim = mAnimations[mAnimName].size();
+    while (mAnimTimer >= tamAnim) {
+        mAnimTimer -= tamAnim;
+    }
 
-    // TODO 1.2 (~1 linha): Atualize o timer da animação `mAnimTimer` com base na taxa de atualização
-    //  (`mAnimFPS`) e no delta time.
-
-    // TODO 1.3 (~3 linhas): Podemos converter o timer da animação `mAnimTimer`para inteiro para obter o índice do quadro
-    //  atual. No entanto, temos que garantir que esse índice não será maior do que número total de quadros da animação
-    //  corrente (`mAnimations[mAnimName].size()). Verifique se o timer da animação é maior ou igual ao número de quadros
-    //  da animação corrente. Se for, utilize um laço `while` para decrementar o timer por esse mesmo número
-    //  até essa condição seja falsa.
 }
 
 void DrawAnimatedComponent::SetAnimation(const std::string& name)
 {
-    // --------------
-    // TODO - PARTE 4
-    // --------------
-
-    // TODO 3.1 (~2 linhas): salve o nome da animação corrente `name` na variável membro `mAnimName` e
-    //  chame a função Update passando delta time igual a zero para reinicializar o timer da animação
-    //  `mAnimTimer`.
+    mAnimName = name;
+    Update(0.0f);
 }
 
 void DrawAnimatedComponent::AddAnimation(const std::string& name, const std::vector<int>& spriteNums)
