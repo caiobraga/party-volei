@@ -20,6 +20,14 @@
 #include "Actors/Spawner.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
+#include "InputProcess.h"
+#include "./Actors/Ball.h"
+#include "Timer.h"
+#include <chrono>
+#include <thread>
+
+using namespace std;
+using namespace chrono;
 
 const int LEVEL_WIDTH = 213;
 const int LEVEL_HEIGHT = 14;
@@ -27,14 +35,16 @@ const int TILE_SIZE = 32;
 const float SPAWN_DISTANCE = 600.0f;
 
 Game::Game(int windowWidth, int windowHeight)
-    :mWindow(nullptr)
+    : mWindow(nullptr)
     , mRenderer(nullptr)
     , mTicksCount(0)
     , mIsRunning(true)
     , mUpdatingActors(false)
     , mWindowWidth(windowWidth)
     , mWindowHeight(windowHeight)
-{
+    , mProcessInput(nullptr)
+    {
+        mBall = nullptr;
 
 }
 
@@ -67,6 +77,8 @@ bool Game::Initialize()
     // Init all game actors
     InitializeActors();
 
+    SetGameState(GameState::Restarting);
+
     return true;
 }
 
@@ -76,10 +88,37 @@ void Game::InitializeActors() {
     // --------------
 
     // TODO 2.1 (~1 linha): Crie um objeto do tipo Mario e armazene-o na variável membro mMario.
-    mMario = new Mario(this);
+    mplayerProcessor = PlayerProcessor();
+    mProcessInput = InputProcess(&mplayerProcessor);
+    Mario* p1 =  new Mario(this);
+    p1->SetPosition(Vector2(64, 120));
+    mplayerProcessor.AddPlayer(p1);
+    Mario* p2 =  new Mario(this);
+    p2->SetPosition(Vector2(432, 120));
+    mplayerProcessor.AddPlayer(p2);
+
+
+
+    //mMario = new Mario(this);
+    //mMario->SetPosition(Vector2(64, 120));
     // TODO 2.2 (~1 linha): Utilize a função LoadLevel para carregar o primeiro nível (Level1.txt) do jogo.
     //  Esse arquivo tem 14 linhas e 213 colunas.
-    LoadLevel("../Assets/Levels/Level1.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
+    LoadLevel("../Assets/Levels/Level0.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
+
+}
+
+void Game::restartLevel() {
+    mBall = nullptr;
+    mBall = new Ball(this, 40);
+    mBall->SetPosition(Vector2(GetWindowWidth() / 2, GetWindowHeight() / 2 - 150));
+
+    mBall->Freeze();
+
+
+    mBall->Unfreeze();
+    mBall->GetRigidBody()->SetVelocity(Random().GetVector(Vector2(-80, -10), Vector2(80, -80)));
+
+    SetGameState(GameState::Normal);
 }
 
 void Game::LoadLevel(const std::string& levelPath, const int width, const int height)
@@ -121,7 +160,6 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
             }
         }
     }
-
 }
 
 void Game::RunLoop()
@@ -137,7 +175,10 @@ void Game::RunLoop()
 void Game::ProcessInput()
 {
     SDL_Event event;
-    while (SDL_PollEvent(&event))
+
+    mProcessInput.Process(SDL_GetKeyboardState(nullptr));
+
+            while (SDL_PollEvent(&event))
     {
         switch (event.type)
         {
@@ -151,7 +192,7 @@ void Game::ProcessInput()
 
     for (auto actor : mActors)
     {
-        actor->ProcessInput(state);
+        //actor->ProcessInput(state);
     }
 }
 
@@ -167,11 +208,19 @@ void Game::UpdateGame()
 
     mTicksCount = SDL_GetTicks();
 
+    if (GetGameState() == GameState::Restarting) {
+        // Do any specific logic for restarting here
+        // ...
+        restartLevel();
+        // Optionally, you can use std::this_thread::sleep_for to yield the CPU
+        //dstd::this_thread::sleep_for(std::chrono::milliseconds(16));
+    }
+
     // Update all actors and pending actors
     UpdateActors(deltaTime);
 
     // Update camera position
-    UpdateCamera();
+    //UpdateCamera();
 }
 
 void Game::UpdateCamera()
@@ -186,7 +235,7 @@ void Game::UpdateCamera()
     //  a posição da câmera, verifique se a posição calculada é maior do que a posição anterior. Além disso,
     //  limite a posição para que a câmera fique entre 0 e o limite superior do nível. Para calcular o
     //  limite superior do nível, utilize as constantes `LEVEL_WIDTH` e `TILE_SIZE`.
-    float camerapos =  mMario->GetPosition().x - mWindowWidth / 2.0;
+    /*float camerapos =  mMario->GetPosition().x - mWindowWidth / 2.0;
     if (camerapos > (LEVEL_WIDTH * TILE_SIZE - mWindowWidth - 32))
         camerapos = LEVEL_WIDTH * TILE_SIZE - mWindowWidth - 32;
     else if (camerapos < GetCameraPos().x)
@@ -194,7 +243,7 @@ void Game::UpdateCamera()
     else if (camerapos < 0)
         camerapos = 0;
 
-    SetCameraPos(Vector2(camerapos,GetCameraPos().y));
+    SetCameraPos(Vector2(camerapos,GetCameraPos().y));*/
 
 }
 

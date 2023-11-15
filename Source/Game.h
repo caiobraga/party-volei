@@ -11,9 +11,21 @@
 #include <vector>
 #include "Math.h"
 #include <string>
+#include "PlayerProcessor.h"
+#include "InputProcess.h"
+#include "./Actors/Ball.h"
 
 class Game
 {
+private:
+    // ... Other class members ...
+
+    enum class GameState {
+        Normal,
+        Restarting,
+    };
+
+    GameState mGameState;
 public:
     Game(int windowWidth, int windowHeight);
 
@@ -41,19 +53,33 @@ public:
     void SetCameraPos(const Vector2& position) { mCameraPos = position; };
 
     // Window functions
-    int GetWindowWidth() const { return mWindowWidth; }
+    int GetWindowWidth() { return mWindowWidth; }
     int GetWindowHeight() const { return mWindowHeight; }
+
 
     SDL_Texture* LoadTexture(const std::string& texturePath);
 
     // Game-specific
-    const class Mario* GetMario() { return mMario; }
+    void restartLevel();
+    void setWinner(Mario* player);
+    void merkPoint(Mario* player);
+    Ball* mBall;
+
+    void SetGameState(GameState state) {
+        mGameState = state;
+    }
+
+    GameState GetGameState() const {
+        return mGameState;
+    }
+
 
 private:
     void ProcessInput();
     void UpdateGame();
     void UpdateCamera();
     void GenerateOutput();
+    int mWindowWidth;
 
     // Game-specific
     void LoadLevel(const std::string& texturePath, int width, int height);
@@ -73,7 +99,6 @@ private:
     SDL_Renderer* mRenderer;
 
     // Window properties
-    int mWindowWidth;
     int mWindowHeight;
 
     // Track elapsed time since game start
@@ -86,5 +111,8 @@ private:
     Vector2 mCameraPos;
 
     // Game-specific
-    class Mario *mMario;
+    PlayerProcessor mplayerProcessor;
+    InputProcess mProcessInput;
+
+
 };

@@ -11,7 +11,7 @@ set(CMAKE_SKIP_RPATH ON CACHE BOOL "Skip RPATH" FORCE)
 ####### DO NOT EDIT ABOVE
 
 # Configurando o nome e executável do projeto
-set(PROJECT_NAME "p4-super-mario-bros")
+set(PROJECT_NAME "jogo-final")
 project(${PROJECT_NAME})
 add_executable(${PROJECT_NAME}
         Source/Main.cpp
@@ -20,6 +20,10 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Actor.cpp
         Source/Components/Component.cpp
         Source/Game.cpp
+        Source/PlayerProcessor.cpp
+        Source/PlayerProcessor.h
+        Source/InputProcess.cpp
+        Source/InputProcess.h
         Source/Components/DrawComponents/DrawComponent.cpp
         Source/Components/DrawComponents/DrawComponent.h
         Source/Components/RigidBodyComponent.cpp
@@ -43,6 +47,9 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Goomba.h
         Source/Actors/Spawner.cpp
         Source/Actors/Spawner.h
+        Source/Actors/Ball.cpp
+        Source/Actors/Ball.h
+        Source/Timer.h
 )
 
 ####### DO NOT EDIT BELLOW
@@ -50,4 +57,4 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image pthread)

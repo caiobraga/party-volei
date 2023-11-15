@@ -9,11 +9,12 @@
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
 #include "../Components/ColliderComponents/AABBColliderComponent.h"
-
+#include "./Ball.h"
 
 Mario::Mario(Game* game,
              const float forwardSpeed,
-             const float jumpSpeed)
+             const float jumpSpeed
+             )
         : Actor(game)
         , mIsRunning(false)
         , mIsDead(false)
@@ -34,39 +35,73 @@ Mario::Mario(Game* game,
     mDrawComponent->SetAnimFPS(10.0f);
 
 }
+void Mario::GoLeft() {
+    mRigidBodyComponent->ApplyForce(Vector2(-mForwardSpeed,0));
+    mRotation = Math::Pi;
+    mIsRunning = true;
+    isLookingRigth = false;
+}
 
-void Mario::OnProcessInput(const uint8_t* state)
-{
-    if (state[SDL_SCANCODE_D])
-    {
-        mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed,0));
-        mRotation = 0;
-        mIsRunning = true;
-    }
-    else if (state[SDL_SCANCODE_A])
-    {
-        mRigidBodyComponent->ApplyForce(Vector2(-mForwardSpeed,0));
-        mRotation = Math::Pi;
-        mIsRunning = true;
-    }
-    else {
-        mIsRunning = false;
-    }
-    if (mIsOnGround == true && state[SDL_SCANCODE_W]) {
+void Mario::GoRigth() {
+    mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed,0));
+    mRotation = 0;
+    mIsRunning = true;
+    isLookingRigth = true;
+}
+
+void Mario::Jump() {
+    if (mIsOnGround == true ) {
         auto vel = mRigidBodyComponent->GetVelocity();
         mRigidBodyComponent->SetVelocity(Vector2(vel.x, mJumpSpeed));
         mIsOnGround = false;
     }
-
 }
+
+void Mario::isNotRunning(){
+    mIsRunning = false;
+}
+
+void Mario::OnProcessInput(const uint8_t* state)
+{
+        /*float pos =  GetPosition().x;
+        if (pos >= this->mGame->GetWindowWidth() /2 -32){
+            auto vel = mRigidBodyComponent->GetVelocity();
+            this->mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed,0));
+        }
+
+        if (state[SDL_SCANCODE_D])
+        {
+            mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed,0));
+            mRotation = 0;
+            mIsRunning = true;
+        }
+        else if (state[SDL_SCANCODE_A])
+        {
+            mRigidBodyComponent->ApplyForce(Vector2(-mForwardSpeed,0));
+            mRotation = Math::Pi;
+            mIsRunning = true;
+        }
+        else {
+            mIsRunning = false;
+        }
+        if (mIsOnGround == true && state[SDL_SCANCODE_W]) {
+            auto vel = mRigidBodyComponent->GetVelocity();
+            mRigidBodyComponent->SetVelocity(Vector2(vel.x, mJumpSpeed));
+            mIsOnGround = false;
+        }*/
+
+    }
+
+
+
 
 void Mario::OnUpdate(float deltaTime)
 {
     auto pos = GetPosition();
-    if (pos.x < GetGame()->GetCameraPos().x) {
+    /*if (pos.x < GetGame()->GetCameraPos().x) {
         pos = GetGame()->GetCameraPos();
         SetPosition(pos);
-    }
+    }*/
 
     if (pos.y > GetGame()->GetWindowHeight()) {
         Kill();
@@ -109,6 +144,22 @@ void Mario::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent:
     for (auto& i : responses) {
 
         auto target = i.second.target;
+
+
+        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Left) {
+            this->GetGame()->mBall->GetRigidBody()->SetVelocity(Vector2(mJumpSpeed / 1.5f,this->GetGame()->mBall->GetRigidBody()->GetVelocity().y ));
+        }
+        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Right) {
+            this->GetGame()->mBall->GetRigidBody()->SetVelocity(Vector2(-mJumpSpeed / 1.5f,this->GetGame()->mBall->GetRigidBody()->GetVelocity().y ));
+        }
+        float directionKickSpeed = isLookingRigth ? -mJumpSpeed*100 : mJumpSpeed*100;
+        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Top) {
+            this->GetGame()->mBall->GetRigidBody()->ApplyForce(Vector2(directionKickSpeed, mJumpSpeed  * 300 ));
+        }
+        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Down) {
+            this->GetGame()->mBall->GetRigidBody()->ApplyForce(((Vector2(directionKickSpeed , -mJumpSpeed * 300) )));
+        }
+
 
         if (target->GetLayer() == ColliderLayer::Blocks && i.first == CollisionSide::Down) {
             mIsOnGround = true;

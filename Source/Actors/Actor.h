@@ -52,7 +52,7 @@ public:
     // Game getter
     class Game* GetGame() { return mGame; }
 
-    // Returns component of type T, or null if doesn't exist
+    // Returns component of type T, or null if it doesn't exist
     template <typename T>
     T* GetComponent() const
     {
