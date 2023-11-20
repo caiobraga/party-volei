@@ -5,6 +5,7 @@
 #include "../Components/DrawComponents/DrawSpriteComponent.h"
 #include "./Ball.h"
 
+
 class Ball : public Actor
 {
 public:
@@ -19,6 +20,20 @@ public:
     void Freeze();
     void Unfreeze();
     bool IsFrozen() const;
+    ~Ball() {
+        if (mRigidBodyComponent) {
+            delete mRigidBodyComponent;
+            mRigidBodyComponent = nullptr;
+        }
+        if (mColliderComponent) {
+            delete mColliderComponent;
+            mColliderComponent = nullptr;
+        }
+        if (mDrawComponent) {
+            delete mDrawComponent;
+            mDrawComponent = nullptr;
+        }
+    }
 
 private:
     bool mIsFrozen;

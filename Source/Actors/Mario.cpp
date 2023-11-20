@@ -145,18 +145,25 @@ void Mario::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent:
 
         auto target = i.second.target;
 
-
+        if(this->GetGame()->mBall != nullptr)
         if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Left) {
+
             this->GetGame()->mBall->GetRigidBody()->SetVelocity(Vector2(mJumpSpeed / 1.5f,this->GetGame()->mBall->GetRigidBody()->GetVelocity().y ));
         }
+        if(this->GetGame()->mBall != nullptr)
         if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Right) {
+            if(this->GetGame()->mBall != nullptr)
             this->GetGame()->mBall->GetRigidBody()->SetVelocity(Vector2(-mJumpSpeed / 1.5f,this->GetGame()->mBall->GetRigidBody()->GetVelocity().y ));
         }
         float directionKickSpeed = isLookingRigth ? -mJumpSpeed*100 : mJumpSpeed*100;
+        if(this->GetGame()->mBall != nullptr)
         if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Top) {
+            if(this->GetGame()->mBall != nullptr)
             this->GetGame()->mBall->GetRigidBody()->ApplyForce(Vector2(directionKickSpeed, mJumpSpeed  * 300 ));
         }
+        if(this->GetGame()->mBall != nullptr)
         if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Down) {
+            if(this->GetGame()->mBall != nullptr)
             this->GetGame()->mBall->GetRigidBody()->ApplyForce(((Vector2(directionKickSpeed , -mJumpSpeed * 300) )));
         }
 

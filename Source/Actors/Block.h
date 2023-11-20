@@ -10,5 +10,5 @@
 class Block : public Actor
 {
 public:
-    explicit Block(Game* game, const std::string &texturePath);
+    explicit Block(Game* game, const std::string &texturePath, bool isRede);
 };

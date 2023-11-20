@@ -33,6 +33,7 @@ const int LEVEL_WIDTH = 213;
 const int LEVEL_HEIGHT = 14;
 const int TILE_SIZE = 32;
 const float SPAWN_DISTANCE = 600.0f;
+const int SCORE_LIMIT = 5;
 
 Game::Game(int windowWidth, int windowHeight)
     : mWindow(nullptr)
@@ -46,7 +47,8 @@ Game::Game(int windowWidth, int windowHeight)
     {
         mBall = nullptr;
 
-}
+
+    }
 
 bool Game::Initialize()
 {
@@ -70,6 +72,17 @@ bool Game::Initialize()
         return false;
     }
 
+    if (TTF_Init() != 0) {
+        std::cerr << "TTF initialization error: " << TTF_GetError() << std::endl;
+        // Handle error
+    }
+
+    TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
+    if (!font) {
+        std::cerr << "Error loading font: " << TTF_GetError() << std::endl;
+        // Handle error
+    }
+
     Random::Init();
 
     mTicksCount = SDL_GetTicks();
@@ -77,7 +90,7 @@ bool Game::Initialize()
     // Init all game actors
     InitializeActors();
 
-    SetGameState(GameState::Restarting);
+    restartLevel();
 
     return true;
 }
@@ -108,8 +121,12 @@ void Game::InitializeActors() {
 }
 
 void Game::restartLevel() {
-    mBall = nullptr;
-    mBall = new Ball(this, 40);
+    SetGameState(GameState::Restarting);
+    if (mBall == nullptr ) {
+        //delete mBall;
+        mBall = new Ball(this, 40);
+    }
+
     mBall->SetPosition(Vector2(GetWindowWidth() / 2, GetWindowHeight() / 2 - 150));
 
     mBall->Freeze();
@@ -149,7 +166,12 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
                 std::string path = "../Assets/Sprites/Blocks/Block";
                 path+=c;
                 path += ".png";
-                new Block(this, path);
+                if(c == 'D'){
+                    new Block(this, path, true);
+                }else{
+                    new Block(this, path, false);
+                }
+
                 int y = mWindowHeight - 14 * 32;
                 mActors.back()->SetPosition(Vector2(32 * j, 32 * i) + Vector2(0,y));
             }else if (c == 'Y')
@@ -159,6 +181,32 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
                 mActors.back()->SetPosition(Vector2(32 * (j), 32 * i) + Vector2(0, y));
             }
         }
+    }
+}
+
+void Game::ScorePoint(const Vector2& position) {
+    int screenWidth = GetWindowWidth();
+    int screenHeight = GetWindowHeight();
+
+    // Check if the ball's position is on the left or right side of the screen
+    if (position.x <= screenWidth / 2) {
+        // If the ball is on the left side, give a point to Player 2 (assuming Player 2 is on the right)
+        mplayerProcessor.AddScore(2);
+    } else {
+        // If the ball is on the right side, give a point to Player 1 (assuming Player 1 is on the left)
+        mplayerProcessor.AddScore(1);
+    }
+
+    // Add additional conditions if needed for top or bottom sides of the screen
+    // Example: if (position.y <= 0) for the top side
+
+    // Restart the level or handle game state as needed
+    // Restart the level if one of the players reaches a certain score limit
+    if (mplayerProcessor.GetScore(1) >= SCORE_LIMIT || mplayerProcessor.GetScore(2) >= SCORE_LIMIT) {
+        // Set the game state to restarting or handle game end logic
+        SetGameState(GameState::Restarting);
+        // Perform actions like restarting the level, displaying a score screen, etc.
+        restartLevel();
     }
 }
 
@@ -209,16 +257,14 @@ void Game::UpdateGame()
     mTicksCount = SDL_GetTicks();
 
     if (GetGameState() == GameState::Restarting) {
-        // Do any specific logic for restarting here
-        // ...
-        restartLevel();
-        // Optionally, you can use std::this_thread::sleep_for to yield the CPU
-        //dstd::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+    }else{
+        UpdateActors(deltaTime);
+
     }
 
-    // Update all actors and pending actors
-    UpdateActors(deltaTime);
 
+    // Update all actors and pending actors
     // Update camera position
     //UpdateCamera();
 }
@@ -336,11 +382,17 @@ void Game::RemoveCollider(AABBColliderComponent* collider)
 
 void Game::GenerateOutput()
 {
-    // Set draw color to black
-    SDL_SetRenderDrawColor(mRenderer, 107, 140, 255, 255);
+
+
+    // Display scores on the screen
+
 
     // Clear back buffer
     SDL_RenderClear(mRenderer);
+    RenderScores(mRenderer);
+   // DisplayScores();
+    // Set draw color to black
+    SDL_SetRenderDrawColor(mRenderer, 107, 140, 255, 255);
 
     for (auto drawable : mDrawables)
     {
@@ -350,8 +402,13 @@ void Game::GenerateOutput()
         }
     }
 
+
+
+
     // Swap front buffer and back buffer
     SDL_RenderPresent(mRenderer);
+
+
 }
 
 SDL_Texture* Game::LoadTexture(const std::string& texturePath) {

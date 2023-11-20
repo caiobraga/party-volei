@@ -1,6 +1,7 @@
 // Ball.cpp
 #include "Ball.h"
 #include <iostream>
+#include "../Game.h"
 
 Ball::Ball(Game* game, float speed)
         : Actor(game), mSpeed(speed)
@@ -55,8 +56,18 @@ void Ball::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::
 
         auto target = i.second.target;
 
+        if (target->GetLayer() == ColliderLayer::Blocks && i.first == CollisionSide::Down) {
+             //std::cout <<  this->GetPosition().y << " " << this->GetGame()->GetWindowHeight() << std::endl;
+
+                GetGame()->ScorePoint(this->GetPosition());
+                GetGame()->restartLevel();
+
+
+
+        }
+
         if (target->GetLayer() == ColliderLayer::Blocks && i.first == CollisionSide::Left) {
-           // std::cout <<  "colisão left" << std::endl;
+            // std::cout <<  "colisão left" << std::endl;
             auto vel = mRigidBodyComponent->GetVelocity();
             mRigidBodyComponent->SetVelocity(Vector2(50, vel.y));
         }
