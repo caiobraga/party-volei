@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="jogo-final"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\local\;CMake Files\..\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\..\usr\local\lib\cmake\SDL2\;CMake Files\..\..\..\..\..\opt\;CMake Files\..\..\..\..\..\opt\SDL2_image\;CMake Files\..\..\..\..\..\opt\SDL2_image\lib\;CMake Files\..\..\..\..\..\opt\SDL2_image\lib\cmake\;CMake Files\..\..\..\..\..\opt\SDL2_image\lib\cmake\SDL2_image\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="jogo-final">
+				<Option output="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug/jogo-final" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include/SDL2"/>
+					<Add directory="/opt/SDL2_image/include/SDL2"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 jogo-final"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="jogo-final/fast">
+				<Option output="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug/jogo-final" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include/SDL2"/>
+					<Add directory="/opt/SDL2_image/include/SDL2"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 jogo-final/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/caio/Área de Trabalho/jogos/jogo-final2/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/caio/Área\ de\ Trabalho/jogos/jogo-final2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Actor.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Actor.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Ball.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Ball.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Block.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Block.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Goomba.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Goomba.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Mario.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Mario.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Spawner.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Actors/Spawner.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/ColliderComponents/AABBColliderComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/ColliderComponents/AABBColliderComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/ColliderComponents/CircleColliderComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/ColliderComponents/CircleColliderComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/Component.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/Component.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawAnimatedComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawAnimatedComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawPolygonComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawPolygonComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawSpriteComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/DrawComponents/DrawSpriteComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/RigidBodyComponent.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Components/RigidBodyComponent.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Game.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Game.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/InputProcess.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/InputProcess.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Json.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Main.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Math.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Math.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/PlayerProcessor.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/PlayerProcessor.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Random.cpp">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Random.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/Source/Timer.h">
+			<Option target="jogo-final"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/../../../../../usr/local/lib/cmake/SDL2/sdl2-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\lib\cmake\SDL2\"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/../../../../../usr/local/lib/cmake/SDL2/sdl2-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\lib\cmake\SDL2\"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/../../../../../opt/SDL2_image/lib/cmake/SDL2_image/sdl2_image-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\SDL2_image\lib\cmake\SDL2_image\"/>
+		</Unit>
+		<Unit filename="/home/caio/Área de Trabalho/jogos/jogo-final2/../../../../../opt/SDL2_image/lib/cmake/SDL2_image/sdl2_image-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\SDL2_image\lib\cmake\SDL2_image\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
