@@ -145,6 +145,13 @@ void Mario::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent:
 
         auto target = i.second.target;
 
+        if(this->GetGame()->mBall != nullptr){
+            if (target->GetLayer() == ColliderLayer::Ball){
+                this->GetGame()->mMusicManaget.PlayHit();
+            }
+        }
+
+
         if(this->GetGame()->mBall != nullptr)
         if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Left) {
 

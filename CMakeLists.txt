@@ -50,11 +50,16 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Ball.cpp
         Source/Actors/Ball.h
         Source/Timer.h
+        Source/Music.cpp
+        Source/Music.h
+        Source/MusicManager.cpp
+        Source/MusicManager.h
 )
 
 ####### DO NOT EDIT BELLOW
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image -lSDL2_ttf pthread)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} SDL2_image::SDL2_image ${SDL2_MIXER_LIBRARIES} -lSDL2_ttf  -lSDL2_mixer pthread)

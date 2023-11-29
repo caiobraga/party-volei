@@ -16,7 +16,9 @@
 #include "./Actors/Ball.h"
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
-
+#include "Camera.h"
+#include "Music.h"
+#include "MusicManager.h"
 
 class Game
 {
@@ -26,6 +28,7 @@ private:
     enum class GameState {
         Normal,
         Restarting,
+        Finishing
     };
 
     GameState mGameState;
@@ -52,8 +55,8 @@ public:
     void RemoveCollider(class AABBColliderComponent* collider);
     std::vector<class AABBColliderComponent*>& GetColliders() { return mColliders; }
 
-    Vector2& GetCameraPos() { return mCameraPos; };
-    void SetCameraPos(const Vector2& position) { mCameraPos = position; };
+    Vector2 GetCameraPos() { return mCamera.GetPosition(); };
+    void SetCameraPos(const Vector2& position) { mCamera.SetPosition(position); };
 
     // Window functions
     int GetWindowWidth() { return mWindowWidth; }
@@ -75,6 +78,69 @@ public:
     GameState GetGameState() const {
         return mGameState;
     }
+
+    void renderFinishText(Mario* winningPlayer){
+        Vector2 winnerPosition = winningPlayer->GetPosition();
+        std::string winText = "You Win!";
+        Vector2 textPosition = Vector2(winnerPosition.x,  winnerPosition.y - 64); // Position for the text
+
+        TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
+        SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
+
+        if (!font) {
+            std::cout << "Error loading font: " << TTF_GetError() << std::endl;
+            return;
+        }
+
+        SDL_Surface* surface1 = TTF_RenderText_Solid(font, winText.c_str(), textColor);
+
+        if (!surface1  ) {
+            std::cout << "Error rendering text: " << TTF_GetError() << std::endl;
+            TTF_CloseFont(font);
+            return;
+        }
+
+        SDL_Texture* player1ScoreTexture = SDL_CreateTextureFromSurface(mRenderer, surface1);
+
+        if (!player1ScoreTexture ) {
+            std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
+            SDL_FreeSurface(surface1);
+            TTF_CloseFont(font);
+            return;
+        }
+        int x = textPosition.x;
+        int y = textPosition.y;
+        SDL_Rect player1Rect = {  x, y , surface1->w, surface1->h }; // Position for Player 1 score
+
+        SDL_RenderCopy(mRenderer, player1ScoreTexture, nullptr, &player1Rect);
+
+        SDL_FreeSurface(surface1);
+        SDL_DestroyTexture(player1ScoreTexture);
+        TTF_CloseFont(font);
+    }
+
+    void finishGame(Mario* winningPlayer) {
+        SetGameState(GameState::Finishing);
+        mBall->Freeze();
+
+        const float zoomSpeed = 0.01f; // Adjust the zoom speed as needed
+        const float maxZoom = 2.0f; // Maximum zoom level
+
+        Vector2 winnerPosition = winningPlayer->GetPosition();
+
+
+        float zoomLevel = 2.0f; // Change this to zoom in or out
+
+
+      //  mCamera.ZoomTo(Vector2(0,0), 3, 12);
+
+
+
+
+
+
+    }
+
     void ScorePoint(const Vector2& position);
     // Font variables
     TTF_Font* font; // Load and manage your font using SDL_ttf
@@ -89,6 +155,8 @@ public:
         // Assuming you have a PlayerProcessor class handling the player scores
         std::string player1ScoreStr = "Score: " + std::to_string(mplayerProcessor.GetScore(1));
         std::string player2ScoreStr = "Score: " + std::to_string(mplayerProcessor.GetScore(2));
+
+
 
         TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
         SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
@@ -131,6 +199,38 @@ public:
         TTF_CloseFont(font);
     }
 
+    void RenderText(const std::string& text, const Vector2& position) {
+        TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
+        SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
+
+        if (!font) {
+            std::cout << "Error loading font: " << TTF_GetError() << std::endl;
+            return;
+        }
+
+        SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+        if (!surface) {
+            std::cout << "Error rendering text: " << TTF_GetError() << std::endl;
+            TTF_CloseFont(font);
+            return;
+        }
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+        if (!texture) {
+            std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
+            SDL_FreeSurface(surface);
+            TTF_CloseFont(font);
+            return;
+        }
+
+        SDL_Rect rect = { static_cast<int>(position.x) , static_cast<int>(position.y), surface->w, surface->h };
+        SDL_RenderCopy(mRenderer, texture, nullptr, &rect);
+
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+        TTF_CloseFont(font);
+    }
+
 // Function to display scores on the screen
     void DisplayScores() {
         // Assuming the scores have been rendered onto textures (call RenderScores before DisplayScores)
@@ -148,6 +248,9 @@ public:
 
 // Example usage in GenerateOutput function
 
+
+
+    MusicManager mMusicManaget = MusicManager();
 
 
 private:
@@ -184,7 +287,7 @@ private:
     bool mIsRunning;
     bool mUpdatingActors;
 
-    Vector2 mCameraPos;
+    Camera mCamera;
 
     // Game-specific
     PlayerProcessor mplayerProcessor;

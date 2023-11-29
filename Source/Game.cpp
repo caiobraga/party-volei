@@ -23,8 +23,11 @@
 #include "InputProcess.h"
 #include "./Actors/Ball.h"
 #include "Timer.h"
+#include "Music.h"
+#include "MusicManager.h"
 #include <chrono>
 #include <thread>
+#include <SDL2/SDL_mixer.h>
 
 using namespace std;
 using namespace chrono;
@@ -44,6 +47,7 @@ Game::Game(int windowWidth, int windowHeight)
     , mWindowWidth(windowWidth)
     , mWindowHeight(windowHeight)
     , mProcessInput(nullptr)
+    , mCamera(mRenderer)
     {
         mBall = nullptr;
 
@@ -52,6 +56,7 @@ Game::Game(int windowWidth, int windowHeight)
 
 bool Game::Initialize()
 {
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -83,6 +88,7 @@ bool Game::Initialize()
         // Handle error
     }
 
+
     Random::Init();
 
     mTicksCount = SDL_GetTicks();
@@ -112,16 +118,24 @@ void Game::InitializeActors() {
 
 
 
+   /* ScorePoint(Vector2(432, 120));
+    ScorePoint(Vector2(432, 120));
+    ScorePoint(Vector2(432, 120));
+    ScorePoint(Vector2(432, 120));*/
+   // ScorePoint(Vector2(432, 120));
+
+
     //mMario = new Mario(this);
     //mMario->SetPosition(Vector2(64, 120));
     // TODO 2.2 (~1 linha): Utilize a função LoadLevel para carregar o primeiro nível (Level1.txt) do jogo.
     //  Esse arquivo tem 14 linhas e 213 colunas.
     LoadLevel("../Assets/Levels/Level0.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
 
+    mMusicManaget.mMusic.PlayMusic(Music::mOVERWORLD);
 }
 
 void Game::restartLevel() {
-    SetGameState(GameState::Restarting);
+
     if (mBall == nullptr ) {
         //delete mBall;
         mBall = new Ball(this, 40);
@@ -130,12 +144,22 @@ void Game::restartLevel() {
     mBall->SetPosition(Vector2(GetWindowWidth() / 2, GetWindowHeight() / 2 - 150));
 
     mBall->Freeze();
+    if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
+        SetGameState(GameState::Finishing);
+        if(mplayerProcessor.GetScore(1) >=5){
+            finishGame(mplayerProcessor.players[0]);
+        }else{
+            finishGame(mplayerProcessor.players[1]);
+        }
+    }else{
 
 
-    mBall->Unfreeze();
-    mBall->GetRigidBody()->SetVelocity(Random().GetVector(Vector2(-80, -10), Vector2(80, -80)));
 
-    SetGameState(GameState::Normal);
+
+        mBall->Unfreeze();
+        mBall->GetRigidBody()->SetVelocity(Random().GetVector(Vector2(-80, -10), Vector2(80, -80)));
+    }
+
 }
 
 void Game::LoadLevel(const std::string& levelPath, const int width, const int height)
@@ -189,25 +213,28 @@ void Game::ScorePoint(const Vector2& position) {
     int screenHeight = GetWindowHeight();
 
     // Check if the ball's position is on the left or right side of the screen
-    if (position.x <= screenWidth / 2) {
-        // If the ball is on the left side, give a point to Player 2 (assuming Player 2 is on the right)
-        mplayerProcessor.AddScore(2);
-    } else {
-        // If the ball is on the right side, give a point to Player 1 (assuming Player 1 is on the left)
-        mplayerProcessor.AddScore(1);
-    }
 
-    // Add additional conditions if needed for top or bottom sides of the screen
-    // Example: if (position.y <= 0) for the top side
+        if (position.x <= screenWidth / 2) {
+            // If the ball is on the left side, give a point to Player 2 (assuming Player 2 is on the right)
+            mplayerProcessor.AddScore(2);
+        } else {
+            // If the ball is on the right side, give a point to Player 1 (assuming Player 1 is on the left)
+            mplayerProcessor.AddScore(1);
+        }
 
-    // Restart the level or handle game state as needed
-    // Restart the level if one of the players reaches a certain score limit
-    if (mplayerProcessor.GetScore(1) >= SCORE_LIMIT || mplayerProcessor.GetScore(2) >= SCORE_LIMIT) {
-        // Set the game state to restarting or handle game end logic
-        SetGameState(GameState::Restarting);
-        // Perform actions like restarting the level, displaying a score screen, etc.
-        restartLevel();
-    }
+        // Add additional conditions if needed for top or bottom sides of the screen
+        // Example: if (position.y <= 0) for the top side
+
+        // Restart the level or handle game state as needed
+        // Restart the level if one of the players reaches a certain score limit
+        if (mplayerProcessor.GetScore(1) >= SCORE_LIMIT || mplayerProcessor.GetScore(2) >= SCORE_LIMIT) {
+            // Set the game state to restarting or handle game end logic
+
+            // Perform actions like restarting the level, displaying a score screen, etc.
+            restartLevel();
+        }
+
+
 }
 
 void Game::RunLoop()
@@ -217,6 +244,7 @@ void Game::RunLoop()
         ProcessInput();
         UpdateGame();
         GenerateOutput();
+       // Music().PlayMusic(Music::mOVERWORLD);
     }
 }
 
@@ -248,7 +276,51 @@ void Game::UpdateGame()
 {
     while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16));
 
+
     float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
+
+    if (mGameState == GameState::Finishing) {
+        static float elapsedTime = 0.0f;
+        elapsedTime += deltaTime; // deltaTime is the time passed since the last frame
+
+        const float zoomDuration = 3.0f; // Duration for zoom effect
+        const float maxZoom = 2.0f; // Maximum zoom level
+
+        // Get the winning player's position (modify this part to fit your logic)
+        Mario* winningPlayer = nullptr;
+        if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
+            SetGameState(GameState::Finishing);
+            if(mplayerProcessor.GetScore(1) >=5){
+                winningPlayer = mplayerProcessor.players[0];
+            }else{
+                winningPlayer = mplayerProcessor.players[1];
+            }
+        }
+
+        Vector2 winnerPosition = winningPlayer->GetPosition();
+
+        // Calculate the zoom level based on elapsed time and duration
+        float t = std::min(elapsedTime / zoomDuration, 1.0f); // Normalize time between 0 and 1
+        float targetZoom = t * maxZoom; // Gradually increase zoom to maxZoom
+
+        // Set camera position (optional - depends on your game logic)
+       // mCamera.SetPosition(winnerPosition);
+
+        // Set the zoom level for the camera
+        mCamera.SetZoom(targetZoom);
+
+        // Optionally, perform rendering using the updated camera parameters
+        // RenderScene(); // Render your scene with the updated camera settings
+
+        // Check if the zoom effect is completed
+        if (t >= 1.0f) {
+            // Zoom effect finished, reset variables or proceed to the next state
+            mGameState = GameState::Restarting;
+            elapsedTime = 0.0f; // Reset elapsed time for future use
+        }
+    }
+
+
     if (deltaTime > 0.05f)
     {
         deltaTime = 0.05f;
@@ -257,7 +329,8 @@ void Game::UpdateGame()
     mTicksCount = SDL_GetTicks();
 
     if (GetGameState() == GameState::Restarting) {
-
+        mplayerProcessor.ZerarScore();
+        mGameState = GameState::Normal;
     }else{
         UpdateActors(deltaTime);
 
@@ -388,7 +461,17 @@ void Game::GenerateOutput()
 
 
     // Clear back buffer
+
+
     SDL_RenderClear(mRenderer);
+    if(GetGameState() == GameState::Finishing){
+        if(mplayerProcessor.GetScore(1) >=5){
+            renderFinishText(mplayerProcessor.players[0]);
+        }else{
+            renderFinishText(mplayerProcessor.players[1]);
+        }
+    }
+
     RenderScores(mRenderer);
    // DisplayScores();
     // Set draw color to black
