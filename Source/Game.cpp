@@ -93,12 +93,25 @@ bool Game::Initialize()
 
     mTicksCount = SDL_GetTicks();
 
+  //  mMenuController->DisplayMenu();
+
     // Init all game actors
+    mplayerProcessor = PlayerProcessor();
+    mProcessInput = InputProcess(&mplayerProcessor);
+    mGameState = GameState::Menu;
+    //InitializeActors();
+
+    //restartLevel();
+    LoadLevel("../Assets/Levels/Level1.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
+    mMusicManaget.mMusic.PlayMusic(Music::mUNDERWORLD);
+
+    return true;
+}
+
+void Game::StartNewGame(){
     InitializeActors();
 
     restartLevel();
-
-    return true;
 }
 
 void Game::InitializeActors() {
@@ -107,8 +120,7 @@ void Game::InitializeActors() {
     // --------------
 
     // TODO 2.1 (~1 linha): Crie um objeto do tipo Mario e armazene-o na variável membro mMario.
-    mplayerProcessor = PlayerProcessor();
-    mProcessInput = InputProcess(&mplayerProcessor);
+
     Mario* p1 =  new Mario(this);
     p1->SetPosition(Vector2(64, 120));
     mplayerProcessor.AddPlayer(p1);
@@ -280,6 +292,7 @@ void Game::UpdateGame()
     float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 
     if (mGameState == GameState::Finishing) {
+        mBall->Freeze();
         static float elapsedTime = 0.0f;
         elapsedTime += deltaTime; // deltaTime is the time passed since the last frame
 
@@ -316,6 +329,7 @@ void Game::UpdateGame()
         if (t >= 1.0f) {
             // Zoom effect finished, reset variables or proceed to the next state
             mGameState = GameState::Restarting;
+            mBall->Unfreeze();
             elapsedTime = 0.0f; // Reset elapsed time for future use
         }
     }
@@ -331,10 +345,11 @@ void Game::UpdateGame()
     if (GetGameState() == GameState::Restarting) {
         mplayerProcessor.ZerarScore();
         mGameState = GameState::Normal;
-    }else{
-        UpdateActors(deltaTime);
-
     }
+
+        if(GetGameState() == GameState::Normal){
+            UpdateActors(deltaTime);
+        }
 
 
     // Update all actors and pending actors
@@ -472,7 +487,16 @@ void Game::GenerateOutput()
         }
     }
 
-    RenderScores(mRenderer);
+    if(GetGameState() == GameState::Normal){
+        RenderScores(mRenderer);
+    }
+
+    if(GetGameState() == GameState::Menu){
+         RenderMenuOptions(mRenderer);
+        HandleMenuInput();
+    }
+
+
    // DisplayScores();
     // Set draw color to black
     SDL_SetRenderDrawColor(mRenderer, 107, 140, 255, 255);

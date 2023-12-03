@@ -26,6 +26,7 @@ private:
     // ... Other class members ...
 
     enum class GameState {
+        Menu,
         Normal,
         Restarting,
         Finishing
@@ -36,6 +37,7 @@ public:
     Game(int windowWidth, int windowHeight);
 
     bool Initialize();
+    void StartNewGame();
     void RunLoop();
     void Shutdown();
     void Quit() { mIsRunning = false; }
@@ -151,6 +153,91 @@ public:
     SDL_Texture* player2ScoreTexture = nullptr;
 
     // Function to render player scores onto textures
+    int selectedMenuOption = 0;
+    std::vector<std::string> menuOptions = {"Start", "Options"};
+
+    void HandleMenuSelection(int selectedOption){
+        std::cout << selectedOption ;
+        if(selectedOption == 0){
+            SetGameState(GameState::Normal);
+            StartNewGame();
+
+        }
+    }
+
+    void RenderMenuOptions(SDL_Renderer* renderer) {
+        TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
+        SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
+
+        if (!font) {
+            std::cout << "Error loading font: " << TTF_GetError() << std::endl;
+            return;
+        }
+
+        int yOffset = mWindowHeight / 2; // Initial Y position for the first menu option
+
+        for (size_t i = 0; i < menuOptions.size(); ++i) {
+            SDL_Surface* surface = TTF_RenderText_Solid(font, menuOptions[i].c_str(), textColor);
+            if (!surface) {
+                std::cout << "Error rendering text: " << TTF_GetError() << std::endl;
+                TTF_CloseFont(font);
+                return;
+            }
+
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+            if (!texture) {
+                std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
+                SDL_FreeSurface(surface);
+                TTF_CloseFont(font);
+                return;
+            }
+
+            int textWidth = surface->w;
+            int textHeight = surface->h;
+
+            SDL_Rect textRect = { (mWindowWidth - textWidth) / 2, yOffset, textWidth, textHeight };
+
+            if (i == selectedMenuOption) {
+                // Highlight the selected option (you can change the color or style here)
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Yellow color
+                SDL_RenderFillRect(renderer, &textRect);
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Reset to default color
+            }
+
+            yOffset += textHeight + 20; // Increase Y position for the next menu option
+
+            SDL_RenderCopy(renderer, texture, nullptr, &textRect);
+
+            SDL_FreeSurface(surface);
+            SDL_DestroyTexture(texture);
+        }
+
+        TTF_CloseFont(font);
+    }
+
+// Assume this function handles user input (e.g., in your game loop)
+    void HandleMenuInput() {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_UP:
+                        selectedMenuOption = (selectedMenuOption - 1 + menuOptions.size()) % menuOptions.size();
+                        break;
+                    case SDLK_DOWN:
+                        selectedMenuOption = (selectedMenuOption + 1) % menuOptions.size();
+                        break;
+                    case SDLK_RETURN:
+                        // Handle selection based on selectedMenuOption
+                        HandleMenuSelection(selectedMenuOption);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
     void RenderScores(SDL_Renderer* renderer) {
         // Assuming you have a PlayerProcessor class handling the player scores
         std::string player1ScoreStr = "Score: " + std::to_string(mplayerProcessor.GetScore(1));
@@ -252,16 +339,21 @@ public:
 
     MusicManager mMusicManaget = MusicManager();
 
+    // Window properties
+    int mWindowHeight;
+    int mWindowWidth;
+
+    // Game-specific
+    void LoadLevel(const std::string& texturePath, int width, int height);
 
 private:
     void ProcessInput();
     void UpdateGame();
     void UpdateCamera();
     void GenerateOutput();
-    int mWindowWidth;
 
-    // Game-specific
-    void LoadLevel(const std::string& texturePath, int width, int height);
+
+
 
     // All the actors in the game
     std::vector<class Actor*> mActors;
@@ -277,8 +369,7 @@ private:
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
 
-    // Window properties
-    int mWindowHeight;
+
 
     // Track elapsed time since game start
     Uint32 mTicksCount;
