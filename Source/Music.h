@@ -22,6 +22,8 @@ public:
 
 	enum eMusic {
 		mNOTHING,
+        mMENU1,
+        mMENU2,
 		mOVERWORLD,
 		mOVERWORLDFAST,
 		mUNDERWORLD,

@@ -11,7 +11,13 @@ Ball::Ball(Game* game, float speed)
 
     mRigidBodyComponent->SetAcceleration(Vector2(speed, speed));
     mColliderComponent = new AABBColliderComponent(this, 0, 0, 32, 32, ColliderLayer::Ball); // Adjust dimensions as needed
-    mDrawComponent = new DrawSpriteComponent(this, "../Assets/Sprites/Blocks/BlockE.png", 32, 32);
+    //mDrawComponent = new DrawSpriteComponent(this, "../Assets/Sprites/ball.png", 32, 32);
+    mDrawComponent = new DrawAnimatedComponent(this, "../Assets/Sprites/ball.png", "../Assets/Sprites/ball.json");
+    mDrawComponent->AddAnimation("idle", {0, 1,2,3});
+    mDrawComponent->SetAnimation("idle");
+    mDrawComponent->SetAnimFPS(10.0f);
+
+
 }
 
 void Ball::OnUpdate(float deltaTime)

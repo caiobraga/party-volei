@@ -154,7 +154,7 @@ public:
 
     // Function to render player scores onto textures
     int selectedMenuOption = 0;
-    std::vector<std::string> menuOptions = {"Start", "Options"};
+    std::vector<std::string> menuOptions = {"Start", };
 
     void HandleMenuSelection(int selectedOption){
         std::cout << selectedOption ;
@@ -199,7 +199,7 @@ public:
 
             if (i == selectedMenuOption) {
                 // Highlight the selected option (you can change the color or style here)
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Yellow color
+                SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255); // Yellow color
                 SDL_RenderFillRect(renderer, &textRect);
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Reset to default color
             }

@@ -103,7 +103,7 @@ bool Game::Initialize()
 
     //restartLevel();
     LoadLevel("../Assets/Levels/Level1.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
-    mMusicManaget.mMusic.PlayMusic(Music::mUNDERWORLD);
+    mMusicManaget.mMusic.PlayMusic(Music::mMENU1);
 
     return true;
 }
@@ -143,7 +143,7 @@ void Game::InitializeActors() {
     //  Esse arquivo tem 14 linhas e 213 colunas.
     LoadLevel("../Assets/Levels/Level0.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
 
-    mMusicManaget.mMusic.PlayMusic(Music::mOVERWORLD);
+    mMusicManaget.mMusic.PlayMusic(Music::mMENU2);
 }
 
 void Game::restartLevel() {
@@ -198,12 +198,13 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
             char c;
             file >> c;
 
-            if (c >= 'A' && c <= 'I') {
+            if (c >= 'A' && c <= 'U') {
                 std::string path = "../Assets/Sprites/Blocks/Block";
                 path+=c;
                 path += ".png";
-                if(c == 'D'){
-                    new Block(this, path, true);
+
+                if(c == 'D' || c == 'M' || c == 'N'){
+                    new Block(this, path, true, c);
                 }else{
                     new Block(this, path, false);
                 }

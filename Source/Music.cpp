@@ -5,7 +5,8 @@
 
 Music::Music(void) {
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-
+    vMusic.push_back(loadMusic("menu1"));
+    vMusic.push_back(loadMusic("menu2"));
 	vMusic.push_back(loadMusic("overworld"));
 	vMusic.push_back(loadMusic("overworld-fast"));
 	vMusic.push_back(loadMusic("underground"));

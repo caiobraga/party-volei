@@ -3,6 +3,7 @@
 
 #include "Actor.h"
 #include "../Components/DrawComponents/DrawSpriteComponent.h"
+#include "../Components/DrawComponents/DrawAnimatedComponent.h"
 #include "./Ball.h"
 
 
@@ -41,5 +42,5 @@ private:
     class RigidBodyComponent* mRigidBodyComponent;
     class AABBColliderComponent* mColliderComponent;
     //class DrawSpriteComponent* mDrawComponent;
-    class DrawSpriteComponent* mDrawComponent;
+    class DrawAnimatedComponent* mDrawComponent;
 };
