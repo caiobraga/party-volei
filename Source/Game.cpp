@@ -25,6 +25,9 @@
 #include "Timer.h"
 #include "Music.h"
 #include "MusicManager.h"
+#include "Scenes/Menu.h"
+#include "Scenes/Overworld.h"
+ #include "Scenes/Single.h"
 #include <chrono>
 #include <thread>
 #include <SDL2/SDL_mixer.h>
@@ -99,11 +102,12 @@ bool Game::Initialize()
     mplayerProcessor = PlayerProcessor();
     mProcessInput = InputProcess(&mplayerProcessor);
     mGameState = GameState::Menu;
-    //InitializeActors();
+    mGameScene = GameScene::Menu;
+    InitializeActors();
 
     //restartLevel();
-    LoadLevel("../Assets/Levels/Level1.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
-    mMusicManaget.mMusic.PlayMusic(Music::mMENU1);
+   // LoadLevel("../Assets/Levels/Level1.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
+    //mMusicManaget.mMusic.PlayMusic(Music::mMENU1);
 
     return true;
 }
@@ -120,30 +124,40 @@ void Game::InitializeActors() {
     // --------------
 
     // TODO 2.1 (~1 linha): Crie um objeto do tipo Mario e armazene-o na variável membro mMario.
+    switch (mGameScene)
+    {
+        case GameScene::Menu:
+            mScene = new Menu(this);
+            mScene->Load();
+            break;
 
-    Mario* p1 =  new Mario(this);
-    p1->SetPosition(Vector2(64, 120));
-    mplayerProcessor.AddPlayer(p1);
-    Mario* p2 =  new Mario(this);
-    p2->SetPosition(Vector2(432, 120));
-    mplayerProcessor.AddPlayer(p2);
+        case GameScene::Overworld:
+            mScene = new Overworld(this);
+            mScene->Load();
+            break;
+
+        case GameScene::single:
+            mScene = new Single(this);
+            mScene->Load();
+            break;
+        default:
+            break;
+    }
 
 
+}
 
-   /* ScorePoint(Vector2(432, 120));
-    ScorePoint(Vector2(432, 120));
-    ScorePoint(Vector2(432, 120));
-    ScorePoint(Vector2(432, 120));*/
-   // ScorePoint(Vector2(432, 120));
+void Game::SetScene(GameScene gameState)
+{
+    // Stop all sounds
+    //mAudio->StopAllSounds();
 
+    // Handle scene transition
+    std::cout << "change scene "<< std::endl;
+    UnloadActors();
+    mGameScene = gameState;
 
-    //mMario = new Mario(this);
-    //mMario->SetPosition(Vector2(64, 120));
-    // TODO 2.2 (~1 linha): Utilize a função LoadLevel para carregar o primeiro nível (Level1.txt) do jogo.
-    //  Esse arquivo tem 14 linhas e 213 colunas.
-    LoadLevel("../Assets/Levels/Level0.txt", LEVEL_WIDTH, LEVEL_HEIGHT);
-
-    mMusicManaget.mMusic.PlayMusic(Music::mMENU2);
+    InitializeActors();
 }
 
 void Game::restartLevel() {
@@ -156,21 +170,29 @@ void Game::restartLevel() {
     mBall->SetPosition(Vector2(GetWindowWidth() / 2, GetWindowHeight() / 2 - 150));
 
     mBall->Freeze();
-    if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
-        SetGameState(GameState::Finishing);
-        if(mplayerProcessor.GetScore(1) >=5){
-            finishGame(mplayerProcessor.players[0]);
+    if(mplayerProcessor.players.size() > 1){
+        if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
+            SetGameState(GameState::Finishing);
+            if(mplayerProcessor.GetScore(1) >=5){
+                finishGame(mplayerProcessor.players[0]);
+            }else{
+                finishGame(mplayerProcessor.players[1]);
+            }
         }else{
-            finishGame(mplayerProcessor.players[1]);
+
+
+
+
+            mBall->Unfreeze();
+            mBall->GetRigidBody()->SetVelocity(Random().GetVector(Vector2(-80, -10), Vector2(80, -80)));
         }
     }else{
 
 
 
 
-        mBall->Unfreeze();
-        mBall->GetRigidBody()->SetVelocity(Random().GetVector(Vector2(-80, -10), Vector2(80, -80)));
     }
+
 
 }
 
@@ -197,8 +219,9 @@ void Game::LoadLevel(const std::string& levelPath, const int width, const int he
         for (int j = 0; j < width; j++) {
             char c;
             file >> c;
+          //  std::cout << "create new actor" << i << " " << j << std::endl;
 
-            if (c >= 'A' && c <= 'U') {
+            if (c >= 'A' && c <= 'R') {
                 std::string path = "../Assets/Sprites/Blocks/Block";
                 path+=c;
                 path += ".png";
@@ -226,7 +249,7 @@ void Game::ScorePoint(const Vector2& position) {
     int screenHeight = GetWindowHeight();
 
     // Check if the ball's position is on the left or right side of the screen
-
+    if(mplayerProcessor.players.size() > 1){
         if (position.x <= screenWidth / 2) {
             // If the ball is on the left side, give a point to Player 2 (assuming Player 2 is on the right)
             mplayerProcessor.AddScore(2);
@@ -246,6 +269,11 @@ void Game::ScorePoint(const Vector2& position) {
             // Perform actions like restarting the level, displaying a score screen, etc.
             restartLevel();
         }
+    }else{
+        mplayerProcessor.DecreaseLife(mplayerProcessor.players[0]);
+
+    }
+
 
 
 }
@@ -283,6 +311,8 @@ void Game::ProcessInput()
     {
         //actor->ProcessInput(state);
     }
+
+    mScene->ProcessInput(state);
 }
 
 void Game::UpdateGame()
@@ -302,14 +332,19 @@ void Game::UpdateGame()
 
         // Get the winning player's position (modify this part to fit your logic)
         Mario* winningPlayer = nullptr;
-        if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
-            SetGameState(GameState::Finishing);
-            if(mplayerProcessor.GetScore(1) >=5){
-                winningPlayer = mplayerProcessor.players[0];
-            }else{
-                winningPlayer = mplayerProcessor.players[1];
+        if(mplayerProcessor.players.size() > 1){
+            if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
+                SetGameState(GameState::Finishing);
+                if(mplayerProcessor.GetScore(1) >=5){
+                    winningPlayer = mplayerProcessor.players[0];
+                }else{
+                    winningPlayer = mplayerProcessor.players[1];
+                }
             }
+        }else{
+
         }
+
 
         Vector2 winnerPosition = winningPlayer->GetPosition();
 
@@ -481,21 +516,26 @@ void Game::GenerateOutput()
 
     SDL_RenderClear(mRenderer);
     if(GetGameState() == GameState::Finishing){
-        if(mplayerProcessor.GetScore(1) >=5){
-            renderFinishText(mplayerProcessor.players[0]);
-        }else{
-            renderFinishText(mplayerProcessor.players[1]);
+        if(mplayerProcessor.players.size() > 1){
+            if(mplayerProcessor.GetScore(1) >=5){
+                renderFinishText(mplayerProcessor.players[0]);
+            }else{
+                renderFinishText(mplayerProcessor.players[1]);
+            }
         }
+
     }
 
-    if(GetGameState() == GameState::Normal){
+    /*if(GetGameState() == GameState::Normal){
         RenderScores(mRenderer);
-    }
+    }*/
 
     if(GetGameState() == GameState::Menu){
-         RenderMenuOptions(mRenderer);
-        HandleMenuInput();
+       // RenderMenuOptions(mRenderer);
+       // HandleMenuInput();
     }
+
+    mScene->GenerateOutput();
 
 
    // DisplayScores();
@@ -551,14 +591,28 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath) {
         return nullptr;
     }
 }
-
-void Game::Shutdown()
+void Game::UnloadActors()
 {
+    std::cout << "Unload actors" << std::endl;
+
+
     while (!mActors.empty())
     {
         delete mActors.back();
     }
 
+   // delete mScene;
+
+
+}
+
+
+void Game::Shutdown()
+{
+
+    UnloadActors();
+    delete mScene;
+    IMG_Quit();
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();

@@ -24,6 +24,7 @@ class Actor
 {
 public:
     Actor(class Game* game);
+    Actor(class Scene* scene);
     virtual ~Actor();
 
     // Update function called from Game (not overridable)

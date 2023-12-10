@@ -11,11 +11,11 @@
 #include "../Components/ColliderComponents/AABBColliderComponent.h"
 #include "./Ball.h"
 
-Mario::Mario(Game* game,
+Mario::Mario(Scene* scene,
              const float forwardSpeed,
              const float jumpSpeed
              )
-        : Actor(game)
+        : Actor(scene)
         , mIsRunning(false)
         , mIsDead(false)
         , mForwardSpeed(forwardSpeed)
@@ -138,57 +138,64 @@ void Mario::Kill()
 
 }
 
-void Mario::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap>& responses)
-{
+void Mario::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap>& responses) {
 
-    for (auto& i : responses) {
+    for (auto &i: responses) {
 
         auto target = i.second.target;
 
-        if(this->GetGame()->mBall != nullptr){
-            if (target->GetLayer() == ColliderLayer::Ball){
-                this->GetGame()->mMusicManaget.PlayHit();
+        if (this->GetGame()->mBall != nullptr) {
+            if (target->GetLayer() == ColliderLayer::Ball) {
+                if (target->GetLayer() == ColliderLayer::Ball) {
+                    this->GetGame()->mMusicManaget.PlayHit();
+                }
             }
-        }
 
 
-        if(this->GetGame()->mBall != nullptr)
-        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Left) {
+            if (this->GetGame()->mBall != nullptr)
+                if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Left) {
 
-            this->GetGame()->mBall->GetRigidBody()->SetVelocity(Vector2(mJumpSpeed / 1.5f,this->GetGame()->mBall->GetRigidBody()->GetVelocity().y ));
-        }
-        if(this->GetGame()->mBall != nullptr)
-        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Right) {
-            if(this->GetGame()->mBall != nullptr)
-            this->GetGame()->mBall->GetRigidBody()->SetVelocity(Vector2(-mJumpSpeed / 1.5f,this->GetGame()->mBall->GetRigidBody()->GetVelocity().y ));
-        }
-        float directionKickSpeed = isLookingRigth ? -mJumpSpeed*100 : mJumpSpeed*100;
-        if(this->GetGame()->mBall != nullptr)
-        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Top) {
-            if(this->GetGame()->mBall != nullptr)
-            this->GetGame()->mBall->GetRigidBody()->ApplyForce(Vector2(directionKickSpeed, mJumpSpeed  * 300 ));
-        }
-        if(this->GetGame()->mBall != nullptr)
-        if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Down) {
-            if(this->GetGame()->mBall != nullptr)
-            this->GetGame()->mBall->GetRigidBody()->ApplyForce(((Vector2(directionKickSpeed , -mJumpSpeed * 300) )));
-        }
+                    this->GetGame()->mBall->GetRigidBody()->SetVelocity(
+                            Vector2(mJumpSpeed / 1.5f, this->GetGame()->mBall->GetRigidBody()->GetVelocity().y));
+                }
+            if (this->GetGame()->mBall != nullptr)
+                if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Right) {
+                    if (this->GetGame()->mBall != nullptr)
+                        this->GetGame()->mBall->GetRigidBody()->SetVelocity(
+                                Vector2(-mJumpSpeed / 1.5f, this->GetGame()->mBall->GetRigidBody()->GetVelocity().y));
+                }
+            float directionKickSpeed = isLookingRigth ? -mJumpSpeed * 100 : mJumpSpeed * 100;
+            if (this->GetGame()->mBall != nullptr)
+                if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Top) {
+                    if (this->GetGame()->mBall != nullptr)
+                        this->GetGame()->mBall->GetRigidBody()->ApplyForce(
+                                Vector2(directionKickSpeed, mJumpSpeed * 300));
+                }
+            if (this->GetGame()->mBall != nullptr)
+                if (target->GetLayer() == ColliderLayer::Ball && i.first == CollisionSide::Down) {
+                    if (this->GetGame()->mBall != nullptr)
+                        this->GetGame()->mBall->GetRigidBody()->ApplyForce(
+                                ((Vector2(directionKickSpeed, -mJumpSpeed * 300))));
+                }
 
 
-        if (target->GetLayer() == ColliderLayer::Blocks && i.first == CollisionSide::Down) {
-            mIsOnGround = true;
-        }
-        if (target->GetLayer() == ColliderLayer::Enemy && i.first == CollisionSide::Down) {
-            mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 1.5f));
-            target->GetOwner()->Kill();
-        }
+            if (target->GetLayer() == ColliderLayer::Blocks && i.first == CollisionSide::Down) {
+                mIsOnGround = true;
+            }
+            if (target->GetLayer() == ColliderLayer::Enemy && i.first == CollisionSide::Down) {
+                mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 1.5f));
+                target->GetOwner()->Kill();
+            }
 
-        if (target->GetLayer() == ColliderLayer::Enemy && (i.first == CollisionSide::Right || i.first == CollisionSide::Left) && mIsOnGround) {
-            Kill();
-        }
-        if (target->GetLayer() == ColliderLayer::Enemy && (i.first == CollisionSide::Right || i.first == CollisionSide::Left) && !mIsOnGround) {
-            mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 1.5f));
-            target->GetOwner()->Kill();
+            if (target->GetLayer() == ColliderLayer::Enemy &&
+                (i.first == CollisionSide::Right || i.first == CollisionSide::Left) && mIsOnGround) {
+                Kill();
+            }
+            if (target->GetLayer() == ColliderLayer::Enemy &&
+                (i.first == CollisionSide::Right || i.first == CollisionSide::Left) && !mIsOnGround) {
+                mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed / 1.5f));
+                target->GetOwner()->Kill();
+            }
         }
     }
 }

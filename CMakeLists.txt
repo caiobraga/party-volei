@@ -49,11 +49,26 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Spawner.h
         Source/Actors/Ball.cpp
         Source/Actors/Ball.h
+        Source/Actors/Point.cpp
+        Source/Actors/Point.h
         Source/Timer.h
         Source/Music.cpp
         Source/Music.h
         Source/MusicManager.cpp
         Source/MusicManager.h
+        Source/Scenes/Menu.cpp
+        Source/Scenes/Menu.h
+        Source/Scenes/Overworld.cpp
+        Source/Scenes/Overworld.h
+        Source/Scenes/Single.cpp
+        Source/Scenes/Single.h
+        Source/Scenes/Scene.cpp
+        Source/Scenes/Scene.h
+        Source/Font.cpp
+        Source/Font.h
+        Source/Components/DrawComponents/DrawTextComponent.cpp
+        Source/Components/DrawComponents/DrawTextComponent.h
+
 )
 
 ####### DO NOT EDIT BELLOW

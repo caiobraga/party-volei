@@ -8,6 +8,7 @@
 
 #include "Actor.h"
 #include "../Game.h"
+#include "../Scenes/Scene.h"
 #include "../Components/Component.h"
 #include <algorithm>
 
@@ -19,6 +20,18 @@ Actor::Actor(Game* game)
         , mGame(game)
         , mIsOnGround(false)
 {
+    mGame->AddActor(this);
+}
+
+Actor::Actor(Scene* scene)
+        : mState(ActorState::Active)
+        , mPosition(Vector2::Zero)
+        , mScale(1.0f)
+        , mRotation(0.0f)
+
+        , mIsOnGround(false)
+{
+    mGame = scene->GetGame();
     mGame->AddActor(this);
 }
 

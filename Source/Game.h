@@ -25,6 +25,8 @@ class Game
 private:
     // ... Other class members ...
 
+
+public:
     enum class GameState {
         Menu,
         Normal,
@@ -32,8 +34,18 @@ private:
         Finishing
     };
 
+    enum class GameScene
+    {
+        Menu,
+        Overworld,
+        single
+    };
+    GameScene mGameScene;
+    class Scene *mScene;
+
     GameState mGameState;
-public:
+
+
     Game(int windowWidth, int windowHeight);
 
     bool Initialize();
@@ -41,6 +53,10 @@ public:
     void RunLoop();
     void Shutdown();
     void Quit() { mIsRunning = false; }
+    void SetScene(GameScene gameState);
+
+    SDL_Renderer* GetRenderer() { return mRenderer; }
+
 
     // Actor functions
     void InitializeActors();
@@ -80,6 +96,8 @@ public:
     GameState GetGameState() const {
         return mGameState;
     }
+
+    void UnloadActors();
 
     void renderFinishText(Mario* winningPlayer){
         Vector2 winnerPosition = winningPlayer->GetPosition();
@@ -216,7 +234,7 @@ public:
     }
 
 // Assume this function handles user input (e.g., in your game loop)
-    void HandleMenuInput() {
+   /* void HandleMenuInput() {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
@@ -236,100 +254,10 @@ public:
                 }
             }
         }
-    }
-
-    void RenderScores(SDL_Renderer* renderer) {
-        // Assuming you have a PlayerProcessor class handling the player scores
-        std::string player1ScoreStr = "Score: " + std::to_string(mplayerProcessor.GetScore(1));
-        std::string player2ScoreStr = "Score: " + std::to_string(mplayerProcessor.GetScore(2));
+    }*/
 
 
 
-        TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
-        SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
-
-        if (!font) {
-            std::cout << "Error loading font: " << TTF_GetError() << std::endl;
-            return;
-        }
-
-        SDL_Surface* surface1 = TTF_RenderText_Solid(font, player1ScoreStr.c_str(), textColor);
-        SDL_Surface* surface2 = TTF_RenderText_Solid(font, player2ScoreStr.c_str(), textColor);
-
-        if (!surface1 || !surface2) {
-            std::cout << "Error rendering text: " << TTF_GetError() << std::endl;
-            TTF_CloseFont(font);
-            return;
-        }
-
-        SDL_Texture* player1ScoreTexture = SDL_CreateTextureFromSurface(renderer, surface1);
-        SDL_Texture* player2ScoreTexture = SDL_CreateTextureFromSurface(renderer, surface2);
-
-        if (!player1ScoreTexture || !player2ScoreTexture) {
-            std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
-            SDL_FreeSurface(surface1);
-            SDL_FreeSurface(surface2);
-            TTF_CloseFont(font);
-            return;
-        }
-
-        SDL_Rect player1Rect = { 80, 100, surface1->w, surface1->h }; // Position for Player 1 score
-        SDL_Rect player2Rect = { mWindowWidth - 80 - surface2->w, 100, surface2->w, surface2->h }; // Position for Player 2 score
-
-        SDL_RenderCopy(renderer, player1ScoreTexture, nullptr, &player1Rect);
-        SDL_RenderCopy(renderer, player2ScoreTexture, nullptr, &player2Rect);
-
-        SDL_FreeSurface(surface1);
-        SDL_FreeSurface(surface2);
-        SDL_DestroyTexture(player1ScoreTexture);
-        SDL_DestroyTexture(player2ScoreTexture);
-        TTF_CloseFont(font);
-    }
-
-    void RenderText(const std::string& text, const Vector2& position) {
-        TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
-        SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
-
-        if (!font) {
-            std::cout << "Error loading font: " << TTF_GetError() << std::endl;
-            return;
-        }
-
-        SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), textColor);
-        if (!surface) {
-            std::cout << "Error rendering text: " << TTF_GetError() << std::endl;
-            TTF_CloseFont(font);
-            return;
-        }
-
-        SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
-        if (!texture) {
-            std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
-            SDL_FreeSurface(surface);
-            TTF_CloseFont(font);
-            return;
-        }
-
-        SDL_Rect rect = { static_cast<int>(position.x) , static_cast<int>(position.y), surface->w, surface->h };
-        SDL_RenderCopy(mRenderer, texture, nullptr, &rect);
-
-        SDL_FreeSurface(surface);
-        SDL_DestroyTexture(texture);
-        TTF_CloseFont(font);
-    }
-
-// Function to display scores on the screen
-    void DisplayScores() {
-        // Assuming the scores have been rendered onto textures (call RenderScores before DisplayScores)
-
-        SDL_Rect player1Rect = { 100, 100, 200, 50 }; // Position and size for Player 1 score
-        SDL_Rect player2Rect = { mWindowWidth /2 , mWindowHeight/2, 100, 100 }; // Position and size for Player 2 score
-
-
-        // Render scores onto the screen
-        SDL_RenderCopy(mRenderer, player1ScoreTexture, nullptr, &player1Rect);
-        SDL_RenderCopy(mRenderer, player2ScoreTexture, nullptr, &player2Rect);
-    }
 
 // Call these functions within your game loop or when you need to update/render scores
 
@@ -346,6 +274,10 @@ public:
     // Game-specific
     void LoadLevel(const std::string& texturePath, int width, int height);
 
+// Game-specific
+PlayerProcessor mplayerProcessor;
+// All the actors in the game
+std::vector<class Actor*> mActors;
 private:
     void ProcessInput();
     void UpdateGame();
@@ -353,10 +285,6 @@ private:
     void GenerateOutput();
 
 
-
-
-    // All the actors in the game
-    std::vector<class Actor*> mActors;
     std::vector<class Actor*> mPendingActors;
 
     // All the draw components
@@ -380,8 +308,6 @@ private:
 
     Camera mCamera;
 
-    // Game-specific
-    PlayerProcessor mplayerProcessor;
     InputProcess mProcessInput;
 
 

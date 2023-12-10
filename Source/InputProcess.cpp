@@ -20,7 +20,7 @@ void InputProcess::Process(const uint8_t* state) {
         bool has2Players = numPlayers > 1;
         if(numPlayers > 0){
             float posP1 =  mPlayerProcessor->players[0]->GetPosition().x;
-            if (posP1 >= (mPlayerProcessor->players[0]->GetGame()->GetWindowWidth() / 2 - 32)){
+            if (posP1 >= (mPlayerProcessor->players[0]->GetGame()->GetWindowWidth() / 2 - 32) && has2Players){
                 auto vel = mPlayerProcessor->players[0]->GetRigidBodyComponent()->GetVelocity();
                 mPlayerProcessor->players[0]->GetRigidBodyComponent()->SetVelocity(Vector2(-mPlayerProcessor->players[0]->GetPlayerVelocity(),0));
             }
@@ -57,7 +57,10 @@ void InputProcess::Process(const uint8_t* state) {
             mPlayerProcessor->players[1]->GoLeft();
         }
         else {
-            mPlayerProcessor->players[1]->isNotRunning();
+            if(has2Players){
+                mPlayerProcessor->players[1]->isNotRunning();
+            }
+
         }
         if (state[SDL_SCANCODE_UP] && has2Players) {
             mPlayerProcessor->players[1]->Jump();

@@ -62,6 +62,11 @@ void Ball::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::
 
         auto target = i.second.target;
 
+        if (target->GetLayer() == ColliderLayer::Point){
+            std::cout << "Point" << std::endl;
+            target->DetectCollision(this->mRigidBodyComponent);
+        }
+
         if (target->GetLayer() == ColliderLayer::Blocks && i.first == CollisionSide::Down) {
              //std::cout <<  this->GetPosition().y << " " << this->GetGame()->GetWindowHeight() << std::endl;
 

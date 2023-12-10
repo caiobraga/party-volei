@@ -8,7 +8,7 @@
 class Mario : public Actor
 {
 public:
-    explicit Mario(Game* game,
+    explicit Mario(Scene* scene,
                   float forwardSpeed = 2500.0f,
                   float jumpSpeed = -750.0f);
 
