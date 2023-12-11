@@ -17,7 +17,7 @@ Menu::Menu(Game* game)
     mMenuFont->Load("../Assets/Fonts/Arial.ttf");
 }
 
-std::vector<std::string> menuOptions = { "Multiplayer", "Single Player" };
+std::vector<std::string> menuOptions = { "Multiplayer", "Training Mode" };
 
 const int LEVEL_WIDTH = 20;
 const int LEVEL_HEIGHT = 14;

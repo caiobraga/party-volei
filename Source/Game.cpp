@@ -188,6 +188,12 @@ void Game::restartLevel() {
         }
     }else{
 
+        mBall->Unfreeze();
+        if(mplayerProcessor.GetLives(mplayerProcessor.players[0]) <= 0){
+            SetGameState(GameState::Finishing);
+            finishGame(mplayerProcessor.players[0]);
+        }
+
 
 
 
@@ -342,6 +348,18 @@ void Game::UpdateGame()
                 }
             }
         }else{
+            winningPlayer = mplayerProcessor.players[0];
+            mBall->Freeze();
+            static float elapsedTime = 0.0f;
+            elapsedTime += deltaTime; // deltaTime is the time passed since the last frame
+
+            const float zoomDuration = 3.0f; // Duration for zoom effect
+            const float maxZoom = 2.0f; // Maximum zoom level
+
+
+
+
+
 
         }
 

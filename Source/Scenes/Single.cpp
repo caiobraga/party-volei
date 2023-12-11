@@ -67,8 +67,8 @@ void Single::Load()
     this->mGame->mMusicManaget.mMusic.PlayMusic(Music::mMENU2);
 
     // Generate random coordinates within the screen dimensions
-    int randomX =  Random().GetFloatRange(1, LEVEL_WIDTH );   // Random X-coordinate
-    int randomY = Random().GetFloatRange(1, LEVEL_HEIGHT - 5 );  // Random Y-coordinate
+    int randomX =  Random().GetFloatRange(5, LEVEL_WIDTH - 5);   // Random X-coordinate
+    int randomY = Random().GetFloatRange(5, LEVEL_HEIGHT - 5 );  // Random Y-coordinate
 
     if(randomX < LEVEL_WIDTH + 4 && randomX > LEVEL_WIDTH - 4 ){
         randomX = (randomX + randomY) % LEVEL_WIDTH;
@@ -99,7 +99,7 @@ void Single::GenerateOutput() {
 
 
 void Single::RenderScores() {
-    if(mGame->GetGameState() != Game::GameState::Normal) return;
+
     // Assuming you have a PlayerProcessor class handling the player scores
     /*std::string player1ScoreStr = "Score: " + std::to_string(mGame->mplayerProcessor.GetScore(1));
     std::string player2ScoreStr = "Score: " + std::to_string(mGame->mplayerProcessor.GetScore(2));
@@ -145,8 +145,8 @@ void Single::RenderScores() {
         return;
     }
 
-    SDL_Rect player1Rect = { 80, 100, surface1->w, surface1->h }; // Position for Player 1 score
-    SDL_Rect player1LifeRect = { mGame->mWindowWidth -  150, 100, surface2->w, surface2->h }; // Position for Player 1 score
+    SDL_Rect player1Rect = { 80, 80, surface1->w, surface1->h }; // Position for Player 1 score
+    SDL_Rect player1LifeRect = { mGame->mWindowWidth -  150, 80, surface2->w, surface2->h }; // Position for Player 1 score
 
     SDL_RenderCopy(mGame->GetRenderer(), player1ScoreTexture, nullptr, &player1Rect);
     SDL_RenderCopy(mGame->GetRenderer(), player1LifeTexture, nullptr, &player1LifeRect);

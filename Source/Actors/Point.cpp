@@ -45,20 +45,13 @@ void Point::ReSpawnPointActor() {
 
 
     // Generate random coordinates within the screen dimensions
-    int randomX =  Random().GetFloatRange(5, mlevelWidth );   // Random X-coordinate
-    int randomY = Random().GetFloatRange(1, mlevelHeight - 7 );  // Random Y-coordinate
+    int randomX =  Random().GetFloatRange(5, mlevelWidth - 5 );   // Random X-coordinate
+    int randomY = Random().GetFloatRange(5, mlevelHeight - 8 );  // Random Y-coordinate
 
-    if(randomX < mlevelWidth + 4 && randomX > mlevelWidth - 4 ){
-        randomX = (randomX + randomY) % mlevelWidth;
-        if(randomX < 5 ){
-            randomX = 5;
-        }
 
-        if(randomX == mlevelWidth ){
-            randomX = mlevelWidth -5;
-        }
+    if(randomX > mlevelWidth / 2 - 1 && randomX < mlevelWidth / 2 + 1){
+        randomX = 4;
     }
-
 
     // Create a point actor at the random coordinates
     //std::string pointTexture = "../Assets/Sprites/Blocks/BlockD.png";

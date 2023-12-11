@@ -59,5 +59,6 @@ public:
     void ZerarScore() {
         scoreTeam1 = 0;
         scoreTeam2 = 0;
+        SetLives(players[0], 5);
     }
 };
