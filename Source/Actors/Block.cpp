@@ -32,10 +32,10 @@ Block::Block(Game* game, const std::string &texturePath, bool isRede, char c)
 
     }else{
         new AABBColliderComponent(this, 0, 0, 32, 32, ColliderLayer::Blocks);
+        new DrawSpriteComponent(this, texturePath, 32, 32);
 
     }
-    // TODO 1.2 (1 linha): Crie o `DrawSpriteComponent` com textura `texturePath` (passada com parâmetro) e dimensões `(32,32)`.
-    new DrawSpriteComponent(this, texturePath, 32, 32);
+
 }
 
 Block::Block(Game* game, const std::string &texturePath, bool isRede)

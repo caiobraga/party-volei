@@ -137,7 +137,22 @@ void Mario::Kill()
     mColliderComponent->SetEnabled(false);
 
 }
+float CalculateImpactForce(float massA, float massB, Vector2 velocityA, Vector2 velocityB) {
+    // Calculate relative velocity
+    Vector2 relativeVelocity = velocityB - velocityA;
 
+    // Calculate the magnitude of relative velocity
+    float relativeSpeed = relativeVelocity.Length(); // You may also use relativeVelocity.Magnitude() depending on your vector class
+
+    // Calculate impact force using a simplified formula (assuming linear collision)
+    float impactForce = massA * massB * relativeSpeed;
+
+    return impactForce;
+}
+
+double Normalize(double value, double minOriginal, double maxOriginal, double minNovo, double maxNovo) {
+    return minNovo + ((value - minOriginal) / (maxOriginal - minOriginal)) * (maxNovo - minNovo);
+}
 void Mario::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap>& responses) {
 
     for (auto &i: responses) {

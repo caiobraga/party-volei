@@ -12,7 +12,6 @@
 #include "Math.h"
 #include <string>
 #include "PlayerProcessor.h"
-#include "InputProcess.h"
 #include "./Actors/Ball.h"
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
@@ -308,7 +307,6 @@ private:
 
     Camera mCamera;
 
-    InputProcess mProcessInput;
 
 
 };

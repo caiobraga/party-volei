@@ -61,6 +61,22 @@ void Overworld::Load()
    // this->mGame->StartNewGame();
     std::cout << "Load Overword" << std::endl;
 
+   /* this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);
+    this->mGame->mplayerProcessor.AddScore(1);*/
+
+
 
 }
 
@@ -87,11 +103,16 @@ void Overworld::RenderScores() {
     std::string player1ScoreStr = "Score: " + std::to_string(mGame->mplayerProcessor.GetScore(1));
     std::string player2ScoreStr = "Score: " + std::to_string(mGame->mplayerProcessor.GetScore(2));
 
+    std::string player1Set =  std::to_string(mGame->mplayerProcessor.setTeam1);
+    std::string player2Set = std::to_string(mGame->mplayerProcessor.setTeam2);
+
 
     TTF_Font* font = TTF_OpenFont("../Arial.ttf", 20);
+    TTF_Font* font2 = TTF_OpenFont("../Arial.ttf", 24);
+
     SDL_Color textColor = { 255, 255, 255, 255 }; // White color for text
 
-    if (!font) {
+    if (!font || !font2) {
         std::cout << "Error loading font: " << TTF_GetError() << std::endl;
         return;
     }
@@ -99,7 +120,10 @@ void Overworld::RenderScores() {
     SDL_Surface* surface1 = TTF_RenderText_Solid(font, player1ScoreStr.c_str(), textColor);
     SDL_Surface* surface2 = TTF_RenderText_Solid(font, player2ScoreStr.c_str(), textColor);
 
-    if (!surface1 || !surface2) {
+    SDL_Surface* surface3 = TTF_RenderText_Solid(font2, player1Set.c_str(), textColor);
+    SDL_Surface* surface4 = TTF_RenderText_Solid(font2, player2Set.c_str(), textColor);
+
+    if (!surface1 || !surface2 || !surface3 || !surface4) {
         std::cout << "Error rendering text: " << TTF_GetError() << std::endl;
         TTF_CloseFont(font);
         return;
@@ -108,7 +132,10 @@ void Overworld::RenderScores() {
     SDL_Texture* player1ScoreTexture = SDL_CreateTextureFromSurface(mGame->GetRenderer(), surface1);
     SDL_Texture* player2ScoreTexture = SDL_CreateTextureFromSurface(mGame->GetRenderer(), surface2);
 
-    if (!player1ScoreTexture || !player2ScoreTexture) {
+    SDL_Texture* player1SetTexture = SDL_CreateTextureFromSurface(mGame->GetRenderer(), surface3);
+    SDL_Texture* player2SetTexture = SDL_CreateTextureFromSurface(mGame->GetRenderer(), surface4);
+
+    if (!player1ScoreTexture || !player2ScoreTexture || !player1SetTexture || ! player2SetTexture) {
         std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
         SDL_FreeSurface(surface1);
         SDL_FreeSurface(surface2);
@@ -118,16 +145,24 @@ void Overworld::RenderScores() {
 
     SDL_Rect player1Rect = { 80, 100, surface1->w, surface1->h }; // Position for Player 1 score
     SDL_Rect player2Rect = { mGame->mWindowWidth - 80 - surface2->w, 100, surface2->w, surface2->h }; // Position for Player 2 score
+    SDL_Rect player1Rect2 = { mGame->mWindowWidth / 2 - 30, 100, surface3->w, surface3->h }; // Position for Player 1 score
+    SDL_Rect player2Rect2 = { mGame->mWindowWidth / 2 + 30 - surface4->w, 100, surface4->w, surface4->h }; // Position for Player 2 score
 
     SDL_RenderCopy(mGame->GetRenderer(), player1ScoreTexture, nullptr, &player1Rect);
     SDL_RenderCopy(mGame->GetRenderer(), player2ScoreTexture, nullptr, &player2Rect);
+    SDL_RenderCopy(mGame->GetRenderer(), player1SetTexture, nullptr, &player1Rect2);
+    SDL_RenderCopy(mGame->GetRenderer(), player2SetTexture, nullptr, &player2Rect2);
 
     SDL_FreeSurface(surface1);
     SDL_FreeSurface(surface2);
     SDL_DestroyTexture(player1ScoreTexture);
     SDL_DestroyTexture(player2ScoreTexture);
+    SDL_FreeSurface(surface3);
+    SDL_FreeSurface(surface4);
+    SDL_DestroyTexture(player1SetTexture);
+    SDL_DestroyTexture(player2SetTexture);
     TTF_CloseFont(font);
-    //TTF_CloseFont(font);
+    TTF_CloseFont(font2);
 }
 /*
 void Overworld::LoadData(const std::string& fileName)

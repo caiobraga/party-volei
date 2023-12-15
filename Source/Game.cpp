@@ -41,6 +41,9 @@ const int TILE_SIZE = 32;
 const float SPAWN_DISTANCE = 600.0f;
 const int SCORE_LIMIT = 5;
 
+InputProcess mProcessInput = InputProcess(nullptr, nullptr) ;
+
+
 Game::Game(int windowWidth, int windowHeight)
     : mWindow(nullptr)
     , mRenderer(nullptr)
@@ -49,8 +52,7 @@ Game::Game(int windowWidth, int windowHeight)
     , mUpdatingActors(false)
     , mWindowWidth(windowWidth)
     , mWindowHeight(windowHeight)
-    , mProcessInput(nullptr)
-    , mCamera(mRenderer)
+     , mCamera(mRenderer)
     {
         mBall = nullptr;
 
@@ -100,7 +102,7 @@ bool Game::Initialize()
 
     // Init all game actors
     mplayerProcessor = PlayerProcessor();
-    mProcessInput = InputProcess(&mplayerProcessor);
+    mProcessInput = InputProcess(&mplayerProcessor, this);
     mGameState = GameState::Menu;
     mGameScene = GameScene::Menu;
     InitializeActors();
@@ -166,14 +168,17 @@ void Game::restartLevel() {
         //delete mBall;
         mBall = new Ball(this, 40);
     }
+    if (mBall == nullptr ) {
+        return;
+    }
 
     mBall->SetPosition(Vector2(GetWindowWidth() / 2, GetWindowHeight() / 2 - 150));
 
     mBall->Freeze();
     if(mplayerProcessor.players.size() > 1){
-        if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
+        if(mplayerProcessor.setTeam1  >=3 || mplayerProcessor.setTeam2 >= 3){
             SetGameState(GameState::Finishing);
-            if(mplayerProcessor.GetScore(1) >=5){
+            if(mplayerProcessor.setTeam1 >=3){
                 finishGame(mplayerProcessor.players[0]);
             }else{
                 finishGame(mplayerProcessor.players[1]);
@@ -329,6 +334,9 @@ void Game::UpdateGame()
     float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 
     if (mGameState == GameState::Finishing) {
+        if (mBall == nullptr ) {
+            return;
+        }
         mBall->Freeze();
         static float elapsedTime = 0.0f;
         elapsedTime += deltaTime; // deltaTime is the time passed since the last frame
@@ -339,9 +347,9 @@ void Game::UpdateGame()
         // Get the winning player's position (modify this part to fit your logic)
         Mario* winningPlayer = nullptr;
         if(mplayerProcessor.players.size() > 1){
-            if(mplayerProcessor.GetScore(1) >=5 || mplayerProcessor.GetScore(2) >= 5){
+            if(mplayerProcessor.setTeam1 >= 3 || mplayerProcessor.setTeam2 >= 3){
                 SetGameState(GameState::Finishing);
-                if(mplayerProcessor.GetScore(1) >=5){
+                if(mplayerProcessor.setTeam1 >= 3 ){
                     winningPlayer = mplayerProcessor.players[0];
                 }else{
                     winningPlayer = mplayerProcessor.players[1];
@@ -363,29 +371,33 @@ void Game::UpdateGame()
 
         }
 
+        if(winningPlayer){
+            Vector2 winnerPosition = winningPlayer->GetPosition();
 
-        Vector2 winnerPosition = winningPlayer->GetPosition();
+            // Calculate the zoom level based on elapsed time and duration
+            float t = std::min(elapsedTime / zoomDuration, 1.0f); // Normalize time between 0 and 1
+            float targetZoom = t * maxZoom; // Gradually increase zoom to maxZoom
 
-        // Calculate the zoom level based on elapsed time and duration
-        float t = std::min(elapsedTime / zoomDuration, 1.0f); // Normalize time between 0 and 1
-        float targetZoom = t * maxZoom; // Gradually increase zoom to maxZoom
+            // Set camera position (optional - depends on your game logic)
+            // mCamera.SetPosition(winnerPosition);
 
-        // Set camera position (optional - depends on your game logic)
-       // mCamera.SetPosition(winnerPosition);
+            // Set the zoom level for the camera
+           // mCamera.SetZoom(targetZoom);
 
-        // Set the zoom level for the camera
-        mCamera.SetZoom(targetZoom);
+            // Optionally, perform rendering using the updated camera parameters
+            // RenderScene(); // Render your scene with the updated camera settings
 
-        // Optionally, perform rendering using the updated camera parameters
-        // RenderScene(); // Render your scene with the updated camera settings
+            // Check if the zoom effect is completed
+            if (t >= 1.0f) {
+                // Zoom effect finished, reset variables or proceed to the next state
+                mGameState = GameState::Restarting;
+                mBall->Unfreeze();
+                elapsedTime = 0.0f; // Reset elapsed time for future use
+            }
 
-        // Check if the zoom effect is completed
-        if (t >= 1.0f) {
-            // Zoom effect finished, reset variables or proceed to the next state
-            mGameState = GameState::Restarting;
-            mBall->Unfreeze();
-            elapsedTime = 0.0f; // Reset elapsed time for future use
         }
+
+
     }
 
 
@@ -535,7 +547,7 @@ void Game::GenerateOutput()
     SDL_RenderClear(mRenderer);
     if(GetGameState() == GameState::Finishing){
         if(mplayerProcessor.players.size() > 1){
-            if(mplayerProcessor.GetScore(1) >=5){
+            if(mplayerProcessor.setTeam1 >=3){
                 renderFinishText(mplayerProcessor.players[0]);
             }else{
                 renderFinishText(mplayerProcessor.players[1]);
@@ -618,6 +630,8 @@ void Game::UnloadActors()
     {
         delete mActors.back();
     }
+
+    mActors.clear();
 
    // delete mScene;
 

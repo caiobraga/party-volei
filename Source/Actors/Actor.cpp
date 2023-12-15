@@ -39,9 +39,15 @@ Actor::~Actor()
 {
     mGame->RemoveActor(this);
 
+
     for(auto component : mComponents)
     {
-        delete component;
+        if(component != nullptr){
+
+            std::cout << "cleaning component " << component << std::endl;
+            delete component;
+            component = nullptr;
+        }
     }
     mComponents.clear();
 }

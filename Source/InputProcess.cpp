@@ -1,7 +1,8 @@
 #include "InputProcess.h"
 #include "Game.h"
-InputProcess::InputProcess(PlayerProcessor *playerProcessor) {
+InputProcess::InputProcess(PlayerProcessor *playerProcessor, Game * game) {
     mPlayerProcessor = playerProcessor;
+    mGame = game;
 }
 
 InputProcess::~InputProcess() {}
@@ -15,7 +16,13 @@ void InputProcess::Process(const uint8_t* state) {
     if(mPlayerProcessor->players.empty()){
         isProcessingPlayerInput = false;
     }
-
+/*
+    if (state[SDL_SCANCODE_P]){
+        mGame->SetGameState(Game::GameState::Menu);
+       // this->mGame->mplayerProcessor.players.clear();
+        mGame->SetScene(Game::GameScene::Menu);
+    }
+*/
     if(isProcessingPlayerInput){
         bool has2Players = numPlayers > 1;
         if(numPlayers > 0){

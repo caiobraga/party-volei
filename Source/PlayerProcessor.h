@@ -17,6 +17,8 @@ public:
     // Function to add score to a player
     int scoreTeam1 = 0 ;
     int scoreTeam2 = 0;
+    int setTeam1 = 0;
+    int setTeam2 = 0;
 
     std::map<Mario*, int> playerLives;
 
@@ -50,8 +52,18 @@ public:
     void AddScore(int playerIndex) {
        if(playerIndex == 1){
            scoreTeam1++;
+           if(scoreTeam1 >= 5){
+               setTeam1++;
+               scoreTeam1 = 0;
+               scoreTeam2 = 0;
+           }
        }else{
            scoreTeam2++;
+           if(scoreTeam2 >= 5){
+               setTeam2++;
+               scoreTeam1 = 0;
+               scoreTeam2 = 0;
+           }
        }
     }
 
@@ -59,6 +71,8 @@ public:
     void ZerarScore() {
         scoreTeam1 = 0;
         scoreTeam2 = 0;
+        setTeam1 = 0;
+        setTeam2 = 0;
         SetLives(players[0], 5);
     }
 };
